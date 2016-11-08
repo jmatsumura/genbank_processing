@@ -8,3 +8,7 @@ do the following:
 - Replace locus tags
 - Update EC numbers
 - Remove hypothetical gene symbols
+
+## Order of the scripts:
+1. locus_mod_gbk.py
+2. common_name_mod_gbk.py
