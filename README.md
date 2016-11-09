@@ -14,3 +14,4 @@ do the following:
 2. common_name_mod_gbk.py
 3. hypothetical_mod_gbk.py
 4. gene_symbol_mod_gbk.py
+5. ec_numbers_mod_gbk.py
