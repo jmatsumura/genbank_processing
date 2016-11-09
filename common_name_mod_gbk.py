@@ -4,26 +4,30 @@
 
 import sys, re
 
-
 # Function to print the product name to a file. Accepts the product name
 # and the handle for the outfile. Will process multi-line name if the
 # characters-per-line exceeds 80.
 def printName(name,out): # need some handling in case of multi-line
-    base = " " * 21 + "/product="
+    base = " " * 21 + "/product=" # first line
+    blank_base = " " * 21 # non-first lines
     if len(name) < 48: # good to go, can print on one line
         final = '%s"%s"\n' % (base,name)
         out.write(final)
     else: # need to do a multi-line print
-        first_line = '%s"%s-\n' % (base,name[0:48]) 
-        out.write(first_line)
-        blank_base = " " * 21
-        beg = 48
-        end = len(name)+1 # end range is exclusive
-        # Note that name variable should be maintained to build multiple subsets from.
-        new_name = name[i:end] # first subset, might be 2 or more lines
-        while len(name) > 58: # max length to add spaces and end quotes
-            name = name[i:end]
-        final_line = '%s%s' % (blank_base,name)
+        n = 57
+        first_line = '%s"%s\n' % (base,name[0:48]) # get first 49 characters
+        out.write(first_line) 
+
+        name_list = [name[i:i+n] for i in range(48, len(name), n)] # build in chunks of size 57
+        end = (len(name_list) - 1) # the end
+
+        for i in range(0, len(name_list)):
+            if i == end: 
+                final_line = '%s%s"\n' % (blank_base,name_list[end])
+                out.write(final_line)
+            else:
+                middle_line = '%s%s\n' % (blank_base,name_list[i])
+                out.write(middle_line)
 
 # Function to build a name from a multi-line product in a GBK file. 
 # Accepts the list of lines consisting of the product names, which
