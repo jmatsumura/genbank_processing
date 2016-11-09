@@ -15,8 +15,8 @@ arg=$(echo $i | cut -f1 -d "=")
 val=$(echo $i | cut -f2 -d "=")
 
 case $arg in
-    --input_list)
-    input_list="$val"
+    --metadata_list)
+    metadata_list="$val"
     ;;
     --output_dir)
     output_dir="$val"
@@ -25,10 +25,14 @@ esac
 shift
 done
 
-# If output directory does not exist, then create it
-if [ ! -d $output_dir ]; then 
-	mkdir -p 777 $output_dir
-fi
+# Read through metadata file, grab the locus, and mkdir with locus name
+for locus in `awk '{print $2}' $metadata_list`; do
+	new_locus=$(echo $locus | sed 's/.$//')
+	mkdir -p 777 $output_dir/$new_locus
+done
+
+exit 0
+
 
 cmd=/usr/bin/perl /path/to/script -arg1 arg1 -arg2 yes
 echo "$cmd"
