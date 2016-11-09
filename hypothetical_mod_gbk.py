@@ -10,6 +10,14 @@ metadata = str(sys.argv[1])
 
 md = open(metadata,'r')
 
+hypothetical = ["conserved hypothetical protein","conserved domain protein"
+    ,"conserved protein","conserved hypothetical family protein"
+    ,"hypothetical protein"]
+    
+hypos = set(hypothetical)
+
+regex_for_product = r'\s+/product="(.*)"'
+
 # Iterate over the metadata file, one line per GBK to process
 for line in md:
     line = line.strip('\n') 
@@ -22,11 +30,39 @@ for line in md:
     gbk_out = "./%s.hypothetical_mod.gbk" % (md_vals[1][:-1])
     outfile = open(gbk_out,'w')
 
+    between_gene_and_product = False
+    hypothetical_found = False
+    g_to_p_list = []
+
     for l in gbk:
-        if "/product=" in l:
-            l = l.replace("conserved hypothetical protein","hypothetical protein")
-            l = l.replace("conserved domain protein","hypothetical protein")
-            l = l.replace("conserved protein","hypothetical protein")
-            outfile.write(l)
+
+        if between_gene_and_product == True:
+            if "/product=" in l:
+                if re.search(regex_for_product,l): # ignore multi-line products
+                    if re.search(regex_for_product,l).group(1) in hypos:
+                        hypothetical_found = True
+                        l = l.replace("conserved hypothetical family protein","hypothetical protein")
+                        l = l.replace("conserved hypothetical protein","hypothetical protein")
+                        l = l.replace("conserved domain protein","hypothetical protein")
+                        l = l.replace("conserved protein","hypothetical protein")
+                g_to_p_list.append(l) # add product (potentially modified)
+
+                for x in g_to_p_list:
+                    if "/gene=" in x and hypothetical_found == True: # ignore gene symbols if hypothetical
+                        pass
+                    else:
+                        outfile.write(x)
+
+                g_to_p_list = [] # reinitialize
+                hypothetical_found = False
+                between_gene_and_product = False
+
+            else: # still inbetween, keep building the list
+                g_to_p_list.append(l)
+
+        elif "   gene   ":
+            g_to_p_list.append(l)
+            between_gene_and_product = True
+
         else:
             outfile.write(l)
