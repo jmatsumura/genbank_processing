@@ -15,3 +15,4 @@ do the following:
 3. hypothetical_mod_gbk.py
 4. gene_symbol_mod_gbk.py
 5. ec_numbers_mod_gbk.py
+6. gbk2tbl.py

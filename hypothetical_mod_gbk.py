@@ -60,9 +60,10 @@ for line in md:
             else: # still inbetween, keep building the list
                 g_to_p_list.append(l)
 
-        elif "   gene   ":
+        elif "   gene   " in l:
             g_to_p_list.append(l)
             between_gene_and_product = True
 
         else:
+            print l
             outfile.write(l)
