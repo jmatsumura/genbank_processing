@@ -12,3 +12,5 @@ do the following:
 ## Order of the scripts:
 1. locus_mod_gbk.py
 2. common_name_mod_gbk.py
+3. hypothetical_mod_gbk.py
+4. gene_symbol_mod_gbk.py
