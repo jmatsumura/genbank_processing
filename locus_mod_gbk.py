@@ -1,16 +1,5 @@
-#!/usr/local/packages/Python-2.7/bin/python
+#!/usr/bin/python
 
-# This script is the first of many which accepts a metadata file with one row for 
-# each GBK to format and the following 24 columns present in each row:
-# 
-# gbk/file | locus tag | curate/common/names/file | delete/gene/symbols/file | 
-# bioproject ID | organism name | strain name | serotype | host | date of isolation
-# country | assembly method | coverage | sequencing method | contact person | 
-# email of contacts | authors | title | illegal/ec/numbers/file | isolation source
-# contact/list/file | biosample ID
-# 
-# Note that values can be null, but you must add a tab even for missing values.
-#
 # Script to convert locus tags in GBK file to a different set prescribed by metadata.
 
 import sys, re
@@ -27,8 +16,10 @@ for line in md:
     line = line.strip('\n') 
     md_vals = line.split('\t')
 
-    gbk = open(md_vals[0],'r') # pull input GBK
     locus = md_vals[1] # pull locus prefix
+
+    gbk_in = "%s/%s/cleaned.gbk" % (out_dir,md_vals[1][:-1])
+    gbk = open(gbk_in,'r') # pull input GBK
 
     # Make a new file name for the outfile
     gbk_out = "%s/%s/locus_mod.gbk" % (out_dir,md_vals[1][:-1]) # use the locus as GBK file name

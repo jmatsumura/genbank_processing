@@ -1,4 +1,4 @@
-#!/usr/local/packages/Python-2.7/bin/python
+#!/usr/bin/python
 
 # Script to standardize "hypothetical" product name syntax and  tags in GBK file
 # to just be "hypothetical protein". This will also remove any gene symbols that 

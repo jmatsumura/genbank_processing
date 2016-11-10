@@ -1,4 +1,4 @@
-#!/usr/local/packages/Python-2.7/bin/python
+#!/usr/bin/python
 
 # Script to modify EC values in a GBK file. 
 # Note that unlike the other scripts this requires a second argument

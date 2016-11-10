@@ -1,4 +1,4 @@
-#!/usr/local/packages/Python-2.7/bin/python
+#!/usr/bin/python
 
 # Script to convert from GBK to TBL. 
 #
@@ -28,7 +28,7 @@ for line in md:
     line = line.strip('\n') 
     md_vals = line.split('\t')
 
-    gbk_in = "%s/%s/ec_numbers_mod.gbk" % (out_dir,md_vals[1][:-1])
+    gbk_in = "%s/%s/cleaned.gbk" % (out_dir,md_vals[1][:-1])
     gbk = open(gbk_in,'rU') # pull input GBK
 
     # Make new TBL and FSA files which are needed for tbl2asn

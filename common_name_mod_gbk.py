@@ -1,4 +1,4 @@
-#!/usr/local/packages/Python-2.7/bin/python
+#!/usr/bin/python
 
 # Script to convert product names in GBK file to a different set prescribed by metadata.
 

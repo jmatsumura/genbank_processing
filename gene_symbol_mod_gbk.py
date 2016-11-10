@@ -1,4 +1,4 @@
-#!/usr/local/packages/Python-2.7/bin/python
+#!/usr/bin/python
 
 # Script to remove (or replace) erroneous gene symbols from a GBK file. 
 
