@@ -19,8 +19,9 @@ for line in md:
 
     # Make a new file name for the outfile
     tbl_out = "./%s.tbl" % (md_vals[1][:-1])
-    outfile = open(tbl_out,'w')
+    tbl_outfile = open(tbl_out,'w')
+    fsa_out = "./%s.fsa" % (md_vals[1][:-1])
+    fsa_outfile = open(fsa_out,'w')
 
     records = SeqIO.parse(gbk, 'genbank')
-    output_handle = open("./cor6_6.fasta", "w")
-    count = SeqIO.write(records, output_handle, "fasta")
+    count = SeqIO.write(records, fsa_outfile, "fasta")
