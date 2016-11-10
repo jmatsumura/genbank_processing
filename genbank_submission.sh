@@ -28,6 +28,9 @@ case $arg in
     --output_dir)
     output_dir="$val"
     ;;
+    --enzyme_dat)
+    enzyme_dat="$val"
+    ;;
 esac
 shift
 done
@@ -54,7 +57,7 @@ cmd=$PY_EXE $DIR/gene_symbol_mod_gbk.py $metadata_list $output_dir
 echo "$cmd"
 $cmd || { echo 'gene_symbol_mod_gbk.py failed!' ; exit 1; }
 
-cmd=$PY_EXE $DIR/ec_numbers_mod_gbk.py $metadata_list $output_dir $EC_DAT
+cmd=$PY_EXE $DIR/ec_numbers_mod_gbk.py $metadata_list $output_dir $enzyme_dat
 echo "$cmd"
 $cmd || { echo 'ec_numbers_mod_gbk.py failed!' ; exit 1; }
 
