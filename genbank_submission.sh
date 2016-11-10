@@ -12,6 +12,8 @@
 PY_EXE=/usr/local/packages/Python-2.7.8/bin/python
 # Directory of shell script (and other scripts)
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+# Path to used Expasy enzyme database file
+EC_DAT=/local/projects/aengine/bin/enzyme.dat
 
 while [[ $# -ge 1 ]]
 do
@@ -52,7 +54,7 @@ cmd=$PY_EXE $DIR/gene_symbol_mod_gbk.py $metadata_list $output_dir
 echo "$cmd"
 $cmd
 
-cmd=$PY_EXE $DIR/ec_numbers_mod_gbk.py $metadata_list $output_dir
+cmd=$PY_EXE $DIR/ec_numbers_mod_gbk.py $metadata_list $output_dir $EC_DAT
 echo "$cmd"
 $cmd
 
