@@ -8,6 +8,13 @@
 #	Shaun Adkins (sadkins@som.umaryland.edu)
 #	James Matsumura (jmatsumura@som.umaryland.edu)
 
+# Python executable
+PY_EXE=/usr/local/packages/Python-2.7.8/bin/python
+# Directory of shell script (and other scripts)
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+# Path to used Expasy enzyme database file
+EC_DAT=/local/projects/aengine/bin/enzyme.dat
+
 while [[ $# -ge 1 ]]
 do
 i="$1"
@@ -31,13 +38,28 @@ for locus in `awk '{print $2}' $metadata_list`; do
 	mkdir -p 777 $output_dir/$new_locus
 done
 
-exit 0
-
-
-cmd=/usr/bin/perl /path/to/script -arg1 arg1 -arg2 yes
+cmd=$PY_EXE $DIR/locus_mod_gbk.py $metadata_list $output_dir
 echo "$cmd"
 $cmd
 
-#TODO: More Perl scripts in place
+cmd=$PY_EXE $DIR/common_name_mod_gbk.py $metadata_list $output_dir
+echo "$cmd"
+$cmd
+
+cmd=$PY_EXE $DIR/hypothetical_mod_gbk.py $metadata_list $output_dir
+echo "$cmd"
+$cmd
+
+cmd=$PY_EXE $DIR/gene_symbol_mod_gbk.py $metadata_list $output_dir
+echo "$cmd"
+$cmd
+
+cmd=$PY_EXE $DIR/ec_numbers_mod_gbk.py $metadata_list $output_dir $EC_DAT
+echo "$cmd"
+$cmd
+
+cmd=$PY_EXE $DIR/gbk2tbl.py $metadata_list $output_dir
+echo "$cmd"
+$cmd
 
 exit 0
