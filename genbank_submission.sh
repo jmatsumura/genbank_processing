@@ -36,27 +36,27 @@ for locus in `awk '{print $2}' $metadata_list`; do
 	mkdir -p 777 $output_dir/$new_locus
 done
 
-cmd=$PY_EXE $DIR/locus_mod_gbk.py $metadata_list
+cmd=$PY_EXE $DIR/locus_mod_gbk.py $metadata_list $output_dir
 echo "$cmd"
 $cmd
 
-cmd=$PY_EXE $DIR/common_name_mod_gbk.py $metadata_list
+cmd=$PY_EXE $DIR/common_name_mod_gbk.py $metadata_list $output_dir
 echo "$cmd"
 $cmd
 
-cmd=$PY_EXE $DIR/hypothetical_mod_gbk.py $metadata_list
+cmd=$PY_EXE $DIR/hypothetical_mod_gbk.py $metadata_list $output_dir
 echo "$cmd"
 $cmd
 
-cmd=$PY_EXE $DIR/gene_symbol_mod_gbk.py $metadata_list
+cmd=$PY_EXE $DIR/gene_symbol_mod_gbk.py $metadata_list $output_dir
 echo "$cmd"
 $cmd
 
-cmd=$PY_EXE $DIR/ec_numbers_mod_gbk.py $metadata_list
+cmd=$PY_EXE $DIR/ec_numbers_mod_gbk.py $metadata_list $output_dir
 echo "$cmd"
 $cmd
 
-cmd=$PY_EXE $DIR/gbk2tbl.py $metadata_list
+cmd=$PY_EXE $DIR/gbk2tbl.py $metadata_list $output_dir
 echo "$cmd"
 $cmd
 
