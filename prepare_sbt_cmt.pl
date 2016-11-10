@@ -6,6 +6,7 @@
 # Version     : 2.0									#
 # Project     :	GenBank Submisison Pipeline						#
 # Description : Script to create .sbt and .cmt files required for GenBank submission	#
+# NOTE		  : This version is modified to work with the db-less GenBank submission pipeline # 
 # Author      : Shaun Adkins								#
 # Date        : April 5, 2016							#
 #											#
@@ -34,7 +35,7 @@ my %hCmdLineArgs = ();
 # Log file handle;
 my $logfh;
 my ($ERROR, $WARN, $DEBUG) = (1, 2, 3);
-my @aMeta = ();
+my %hMeta = ();
 # This is the form data to be sent as POST
 my %post_data = ();
 
@@ -52,12 +53,13 @@ pod2usage( {-exitval => 0, -verbose => 2, -output => \*STDERR} ) if ($hCmdLineAr
 
 checkCmdLineArgs(\%hCmdLineArgs);
 
-readInput($hCmdLineArgs{'input_file'}, \@aMeta);
+readInput($hCmdLineArgs{'input_file'});
 
-prepareSbt(\@aMeta, $hCmdLineArgs{'output_dir'});
-
-prepareCmt(\@aMeta, $hCmdLineArgs{'output_dir'});
-
+# loop through all metadata lines
+foreach my $meta_line (scalar keys %$hMeta){
+	prepareSbt($meta_line, $hCmdLineArgs{'output_dir'});
+	prepareCmt($meta_line, $hCmdLineArgs{'output_dir'});
+}
 ###############
 # SUBROUTINES #
 ###############
@@ -77,7 +79,7 @@ sub prepareSbt {
 	my ($sCmd, $sSbtFile);
 	my $fhRead;
 
-	$sSbtFile = $sOutDir."/".$metadata->[0].".sbt";
+	$sSbtFile = $sOutDir."/".$metadata->[1].".sbt";
 # Authors section
 	my @aAuthors = ();
 	my ($sLast, $sFirst, $sMiddle, $sAuthorForm) = "";
@@ -208,36 +210,6 @@ sub send_request {
 
 }
 
-####################################################################################################################################################
-# Description   : Used to create the file path on NCBI SRA FTP server using the SRX/SRR/SRS/SRP id  
-# Parameters    : sRunId
-#		  sRunId - SRA compatible experiment id or run id or sample id or study id for the read files to be downloaded
-# Returns       : sFile
-#		  sFile - NCBI SRA FTP file path for the specified id
-# Modifications :
-
-sub createDbDir {
-	my ($sOutDir, $sDb) = @_;
-	my $sSubName = (caller(0))[3];
-	my $sDbDir;
-
-	$sDbDir = $sOutDir."/".$sDb;
-	if((-e $sDbDir) && (-d $sDbDir)) {
-		return(1);
-	} else {
-		if((-e $sOutDir) && (-d $sOutDir)) {
-			if(mkdir $sDbDir) {
-				return(1);
-			} else {
-				printLogMsg($ERROR, "ERROR : $sSubName :: Unable to create database specific directory within output directory $sOutDir. Reason : $!");
-			}
-			
-		} else {
-			printLogMsg($ERROR, "ERROR : $sSubName :: Provided output directory $sOutDir does not exist.");
-		}
-	}
-}
-
 
 ####################################################################################################################################################
 # Description   : Used to create the file path on NCBI SRA FTP server using the SRX/SRR/SRS/SRP id  
@@ -253,7 +225,7 @@ sub prepareCmt {
 	my $sCmtFile;
 	my $fhWrite;
 
-	$sCmtFile = $sOutDir."/".$metadata->[0].".cmt";
+	$sCmtFile = $sOutDir."/".$metadata->[1].".cmt";
 	open($fhWrite, "> $sCmtFile") or printLogMsg($ERROR, "Could not open file $sCmtFile for writing. Reason : $!");
 	
 	print $fhWrite "StructuredCommentPrefix\t##Genome-Assembly-Data-START##\n";
@@ -279,7 +251,7 @@ sub prepareCmt {
 # Modifications :
 
 sub readInput {
-	my ($sFile, $metadata) = @_;
+	my ($sFile) = @_;
 	my $nI;
 	my $sLine;
 	my $fhRead;
@@ -290,9 +262,9 @@ sub readInput {
 		chomp($sLine);
 		next if($sLine =~ /^#/);
 		next if($sLine =~ /^\s+$/);
-		@{$metadata} = split(/\t/, $sLine);
+		my @{$metadata} = split(/\t/, $sLine);
 		# @meta : This script needs columns 0, 5-20, and either one (or both) of 4 and 21
-#		[0] = Db name
+#		[0] = gbk name
 #		[1] = NCBI locus tag
 #		[2] = Path to rules file
 #		[3] = Path to gene symbols file
@@ -315,8 +287,8 @@ sub readInput {
 #		[20]= Path to contact person address info
 #		[21]= Biosample ID
 
-		if(!length($metadata->[0])) {
-			printLogMsg($ERROR, "ERROR : Database name missing for $sLine.");
+		if(!length($metadata->[1])) {
+			printLogMsg($ERROR, "ERROR : Locus name missing for $sLine.");
 		}
 
 		for($nI = 5; $nI <= 19; $nI++) {
@@ -332,6 +304,9 @@ sub readInput {
 			printLogMsg($WARN, "WARNING : Path for author contact info not supplied.  Will use default parameters");
 		}
 		
+		# Store all metadata lines into a hash using the LOCUS as the key
+		my $locus = chop $metadata->[1] if $metadata->[1] =~ /_$/;
+		$hMeta->{$locus} = $metadata;
 	}
 	close($fhRead);	
 }
