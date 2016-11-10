@@ -35,7 +35,7 @@ done
 # Read through metadata file, grab the locus, and mkdir with locus name
 for locus in `awk '{print $2}' $metadata_list`; do
 	new_locus=$(echo $locus | sed 's/.$//')
-	mkdir -p $output_dir/$new_locus
+	mkdir -p -m 777 $output_dir/$new_locus 
 done
 
 cmd=$PY_EXE $DIR/locus_mod_gbk.py $metadata_list $output_dir
