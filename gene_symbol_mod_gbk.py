@@ -8,7 +8,7 @@ metadata = str(sys.argv[1])
 
 md = open(metadata,'r')
 
-regex_for_gene_sym = '\s+/gene="(.*)"'
+regex_for_gene_sym = r'\s+/gene="(.*)"'
 
 # Iterate over the metadata file, one line per GBK to process
 for line in md:

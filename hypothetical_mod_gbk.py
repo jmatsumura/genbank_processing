@@ -65,5 +65,4 @@ for line in md:
             between_gene_and_product = True
 
         else:
-            print l
             outfile.write(l)

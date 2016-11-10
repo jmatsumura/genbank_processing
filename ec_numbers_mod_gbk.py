@@ -12,9 +12,9 @@ enzyme_file = str(sys.argv[2])
 md = open(metadata,'r')
 ed = open(enzyme_file,'r')
 
-regex_for_ec_num = '\s+/EC_number="(.*)"'
-regex_for_ec_id = '^ID\s+(.*)$'
-regex_for_ec_transferred = '^DE\s+Transferred entry:\s(.*)$'
+regex_for_ec_num = r'\s+/EC_number="(.*)"'
+regex_for_ec_id = r'^ID\s+(.*)$'
+regex_for_ec_transferred = r'^DE\s+Transferred entry:\s(.*)$'
 
 transferred_ec = {} # dict for ECs that have been updated
 
