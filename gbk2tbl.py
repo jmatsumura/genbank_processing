@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/local/packages/Python-2.7/bin/python
 
 # Script to convert from GBK to TBL. 
 #

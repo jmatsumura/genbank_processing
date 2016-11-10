@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/local/packages/Python-2.7/bin/python
 
 # This script is the first of many which accepts a metadata file with one row for 
 # each GBK to format and the following 24 columns present in each row:
