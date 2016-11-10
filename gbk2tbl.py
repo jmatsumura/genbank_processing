@@ -9,6 +9,7 @@ import sys, re
 from Bio import SeqIO
 
 metadata = str(sys.argv[1])
+out_dir = str(sys.argv[2])
 
 md = open(metadata,'r')
 
@@ -27,13 +28,13 @@ for line in md:
     line = line.strip('\n') 
     md_vals = line.split('\t')
 
-    gbk_in = "./%s.ec_numbers_mod.gbk" % (md_vals[1][:-1])
+    gbk_in = "%s/%s/ec_numbers_mod.gbk" % (out_dir,md_vals[1][:-1])
     gbk = open(gbk_in,'rU') # pull input GBK
 
     # Make new TBL and FSA files which are needed for tbl2asn
-    tbl_out = "./%s.tbl" % (md_vals[1][:-1])
+    tbl_out = "%s/%s/out.tbl" % (out_dir,md_vals[1][:-1])
     tbl_outfile = open(tbl_out,'w')
-    fsa_out = "./%s.fsa" % (md_vals[1][:-1])
+    fsa_out = "%s/%s/out.fsa" % (out_dir,md_vals[1][:-1])
     fsa_outfile = open(fsa_out,'w')
 
     records = SeqIO.parse(gbk, 'genbank') # get all GBK entries
@@ -86,8 +87,7 @@ for line in md:
                         for vals in values:
                             qualifier = "\t\t\t%s\t%s\n" % (key,vals)
                             tbl_outfile.write(qualifier)
-                    elif key == "protein_id": 
+                    elif key == "protein_id": # special case, need to build an aggregate string from list
                         val = ''.join(f.qualifiers['protein_id'])
                         qualifier = "\t\t\t%s\t%s\n" % (key,val)
                         tbl_outfile.write(qualifier)
-

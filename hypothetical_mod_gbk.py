@@ -7,6 +7,7 @@
 import sys, re
 
 metadata = str(sys.argv[1])
+out_dir = str(sys.argv[2])
 
 md = open(metadata,'r')
 
@@ -23,11 +24,11 @@ for line in md:
     line = line.strip('\n') 
     md_vals = line.split('\t')
 
-    gbk_in = "./%s.common_name_mod.gbk" % (md_vals[1][:-1])
+    gbk_in = "%s/%s/common_name_mod.gbk" % (out_dir,md_vals[1][:-1])
     gbk = open(gbk_in,'r') # pull input GBK
 
     # Make a new file name for the outfile
-    gbk_out = "./%s.hypothetical_mod.gbk" % (md_vals[1][:-1])
+    gbk_out = "%s/%s/hypothetical_mod.gbk" % (out_dir,md_vals[1][:-1])
     outfile = open(gbk_out,'w')
 
     between_gene_and_product = False

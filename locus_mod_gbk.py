@@ -16,6 +16,7 @@
 import sys, re
 
 metadata = str(sys.argv[1])
+out_dir = str(sys.argv[2])
 
 md = open(metadata,'r')
 
@@ -30,7 +31,7 @@ for line in md:
     locus = md_vals[1] # pull locus prefix
 
     # Make a new file name for the outfile
-    gbk_out = "./%s.locus_mod.gbk" % (md_vals[1][:-1]) # use the locus as GBK file name
+    gbk_out = "%s/%s/locus_mod.gbk" % (out_dir,md_vals[1][:-1]) # use the locus as GBK file name
     outfile = open(gbk_out,'w')
 
     for l in gbk:

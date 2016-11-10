@@ -7,7 +7,8 @@
 import sys, re
 
 metadata = str(sys.argv[1])
-enzyme_file = str(sys.argv[2])
+out_dir = str(sys.argv[2])
+enzyme_file = str(sys.argv[3])
 
 md = open(metadata,'r')
 ed = open(enzyme_file,'r')
@@ -38,7 +39,7 @@ for line in md:
     line = line.strip('\n') 
     md_vals = line.split('\t')
 
-    gbk_in = "./%s.gene_symbol_mod.gbk" % (md_vals[1][:-1])
+    gbk_in = "%s/%s/gene_symbol_mod.gbk" % (out_dir,md_vals[1][:-1])
     gbk = open(gbk_in,'r') # pull input GBK
 
     # Now grab all the EC numbers that are to be deleted noted by the metadata file. 
@@ -50,7 +51,7 @@ for line in md:
     delete_us = set(ecs_to_delete)
 
     # Make a new file name for the outfile
-    gbk_out = "./%s.ec_numbers_mod.gbk" % (md_vals[1][:-1])
+    gbk_out = "%s/%s/ec_numbers_mod.gbk" % (out_dir,md_vals[1][:-1])
     outfile = open(gbk_out,'w')
 
     for l in gbk:

@@ -5,6 +5,7 @@
 import sys, re
 
 metadata = str(sys.argv[1])
+out_dir = str(sys.argv[2])
 
 md = open(metadata,'r')
 
@@ -15,7 +16,7 @@ for line in md:
     line = line.strip('\n') 
     md_vals = line.split('\t')
 
-    gbk_in = "./%s.hypothetical_mod.gbk" % (md_vals[1][:-1])
+    gbk_in = "%s/%s/hypothetical_mod.gbk" % (md_vals[1][:-1])
     gbk = open(gbk_in,'r') # pull input GBK
     gene_symbols = open(md_vals[3],'r') # pull name map file
 
@@ -27,7 +28,7 @@ for line in md:
         gs_map[names[1]] = names[0]
 
     # Make a new file name for the outfile
-    gbk_out = "./%s.gene_symbol_mod.gbk" % (md_vals[1][:-1])
+    gbk_out = "%s/%s/gene_symbol_mod.gbk" % (md_vals[1][:-1])
     outfile = open(gbk_out,'w')
 
     for l in gbk:

@@ -44,6 +44,7 @@ def resolveName(name_list,name_dict):
 
 
 metadata = str(sys.argv[1])
+out_dir = str(sys.argv[2])
 
 md = open(metadata,'r')
 
@@ -54,7 +55,7 @@ for line in md:
     line = line.strip('\n') 
     md_vals = line.split('\t')
 
-    gbk_in = "./%s.locus_mod.gbk" % (md_vals[1][:-1])
+    gbk_in = "%s/%s/locus_mod.gbk" % (out_dir,md_vals[1][:-1])
     gbk = open(gbk_in,'r') # pull input GBK
     common_names = open(md_vals[2],'r') # pull name map file
 
@@ -66,7 +67,7 @@ for line in md:
         name_map[names[1]] = names[0]
 
     # Make a new file name for the outfile
-    gbk_out = "./%s.common_name_mod.gbk" % (md_vals[1][:-1])
+    gbk_out = "%s/%s/common_name_mod.gbk" % (out_dir,md_vals[1][:-1])
     outfile = open(gbk_out,'w')
 
     found_product = False
