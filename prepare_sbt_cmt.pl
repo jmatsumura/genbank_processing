@@ -56,7 +56,7 @@ checkCmdLineArgs(\%hCmdLineArgs);
 readInput($hCmdLineArgs{'input_file'});
 
 # loop through all metadata lines
-foreach my $locus (scalar keys %hMeta){
+foreach my $locus (keys %hMeta){
 	prepareSbt($hMeta{$locus}, $hCmdLineArgs{'output_dir'});
 	prepareCmt($hMeta{$locus}, $hCmdLineArgs{'output_dir'});
 }
