@@ -125,7 +125,7 @@ sub readInput {
 		chomp($sLine);
 		next if($sLine =~ /^#/);
 		next if($sLine =~ /^\s+$/);
-		my $paMeta
+		my $paMeta;
 		@$paMeta = split(/\t/, $sLine);
 		# @meta : This script needs columns 0 and 5-10 
 #		[0] = Db name
@@ -160,7 +160,7 @@ sub readInput {
 		# Store all metadata lines into a hash using the LOCUS as the key
 		my $locus = $paMeta->[1];
 		chop $locus if $locus =~ /_$/;
-		$hMeta{$locus} = $metadata;
+		$hMeta{$locus} = $paMeta;
 	}
 	close($fhRead);	
 }
