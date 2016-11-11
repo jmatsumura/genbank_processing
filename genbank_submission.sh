@@ -9,7 +9,7 @@
 #	James Matsumura (jmatsumura@som.umaryland.edu)
 
 # Python executable
-PY_EXE=/usr/local/packages/Python-2.7.8/bin/python
+PY_EXE=/usr/local/packages/python-3.5.1/bin/python
 # Directory of shell script (and other scripts)
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 # Path to used Expasy enzyme database file
@@ -27,9 +27,6 @@ case $arg in
     ;;
     --output_dir)
     output_dir="$val"
-    ;;
-    --enzyme_dat)
-    enzyme_dat="$val"
     ;;
 esac
 shift

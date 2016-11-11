@@ -70,7 +70,7 @@ for line in md:
                 f.qualifiers['protein_id'] = protein_id # note this assigns one char per index due to BioPython
 
             # Now print any of the fields within the gene/CDS/RNA entries.
-            for key,values in f.qualifiers.iteritems():
+            for key,values in f.qualifiers.items():
 
                 if f.type == 'gene':
                     # First, if a 'gene' is found must introduce a protein_id

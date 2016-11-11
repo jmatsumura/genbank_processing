@@ -57,8 +57,9 @@ readInput($hCmdLineArgs{'input_file'});
 
 # loop through all metadata lines
 foreach my $locus (keys %hMeta){
-	prepareSbt($hMeta{$locus}, $hCmdLineArgs{'output_dir'});
-	prepareCmt($hMeta{$locus}, $hCmdLineArgs{'output_dir'});
+	my $locus_dir = $hCmdLineArgs{'output_dir'}."/$locus";
+	prepareSbt($hMeta{$locus}, $locus_dir);
+	prepareCmt($hMeta{$locus}, $locus_dir);
 }
 ###############
 # SUBROUTINES #
