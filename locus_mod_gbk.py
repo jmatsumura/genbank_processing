@@ -1,4 +1,4 @@
-#!/usr/bin/python
+
 
 # Script to convert locus tags in GBK file to a different set prescribed by metadata.
 

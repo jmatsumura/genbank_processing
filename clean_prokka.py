@@ -1,4 +1,4 @@
-#!/usr/bin/python
+
 
 # Script to clean various erroneous aspects of Prokka output.
 # Namely, fixing BP number in LOCUS line and moving all the qualifiers
