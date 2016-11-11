@@ -12,10 +12,8 @@ out_dir = str(sys.argv[2])
 
 md = open(metadata,'r')
 
-regex_for_cds = r'\s+CDS\s+\d+..\d+'
 # Note that capturing coords must accept complement syntax too
-regex_for_coords = r'\s+[a-zA-Z]+\s+(.*\d+..\d+\)*)' 
-regex_for_generic = r'\s+([a-zA-Z]+)\s+\d+..\d+'
+regex_for_coord_string = r'^\s+([a-zA-Z]+)\s+([complement]*\(*\d+..\d+\)*)'
 
 # Iterate over the metadata file, one line per GBK to process
 for line in md:
@@ -74,8 +72,8 @@ for line in md:
                     extract_gene = False
 
                 # Try find some field that needs gene info extracted
-                elif re.search(regex_for_generic,line):
-                    if re.search(regex_for_generic,line).group(1) != 'source':
+                elif re.search(regex_for_coord_string,line):
+                    if re.search(regex_for_coord_string,line).group(1) != 'source':
                         # Found a new CDS entry, add the gene / CDS lines
                         for x in gene_entry:
                             outfile.write(x)
@@ -83,7 +81,7 @@ for line in md:
                             outfile.write(x)
                         gene_entry,cdsrna_entry = ([] for i in range(2)) # reset 
                         cdsrna_entry.append(line)
-                        coords = re.search(regex_for_coords,line).group(1)
+                        coords = re.search(regex_for_coord_string,line).group(2)
                         gene_str = ' '*5 + 'gene' + ' '*12 + coords + '\n'
                         gene_entry.append(gene_str)
                         extract_gene = True
@@ -99,11 +97,11 @@ for line in md:
                     else:
                         cdsrna_entry.append(line)
             else:
-                if re.search(regex_for_generic,line):
-                    if re.search(regex_for_generic,line).group(1) != 'source':
+                if re.search(regex_for_coord_string,line):
+                    if re.search(regex_for_coord_string,line).group(1) != 'source':
                         # Grab 'headers' for both gene and other field
                         cdsrna_entry.append(line)
-                        coords = re.search(regex_for_coords,line).group(1)
+                        coords = re.search(regex_for_coord_string,line).group(2)
                         gene_str = ' '*5 + 'gene' + ' '*12 + coords + '\n'
                         gene_entry.append(gene_str)
                         extract_gene = True
