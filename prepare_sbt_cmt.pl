@@ -56,9 +56,9 @@ checkCmdLineArgs(\%hCmdLineArgs);
 readInput($hCmdLineArgs{'input_file'});
 
 # loop through all metadata lines
-foreach my $meta_line (scalar keys %$hMeta){
-	prepareSbt($meta_line, $hCmdLineArgs{'output_dir'});
-	prepareCmt($meta_line, $hCmdLineArgs{'output_dir'});
+foreach my $locus (scalar keys %hMeta){
+	prepareSbt(%hMeta{$locus}, $hCmdLineArgs{'output_dir'});
+	prepareCmt(%hMeta{$locus}, $hCmdLineArgs{'output_dir'});
 }
 ###############
 # SUBROUTINES #
@@ -262,7 +262,8 @@ sub readInput {
 		chomp($sLine);
 		next if($sLine =~ /^#/);
 		next if($sLine =~ /^\s+$/);
-		my @{$metadata} = split(/\t/, $sLine);
+		my $metadata;
+		@$metadata = split(/\t/, $sLine);
 		# @meta : This script needs columns 0, 5-20, and either one (or both) of 4 and 21
 #		[0] = gbk name
 #		[1] = NCBI locus tag
@@ -305,8 +306,9 @@ sub readInput {
 		}
 		
 		# Store all metadata lines into a hash using the LOCUS as the key
-		my $locus = chop $metadata->[1] if $metadata->[1] =~ /_$/;
-		$hMeta->{$locus} = $metadata;
+		my $locus = $metadata->[1];
+		chop $locus if $locus =~ /_$/;
+		$hMeta{$locus} = $metadata;
 	}
 	close($fhRead);	
 }

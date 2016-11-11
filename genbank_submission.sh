@@ -41,6 +41,11 @@ for locus in `awk '{print $2}' $metadata_list`; do
 	mkdir -p -m 777 $output_dir/$new_locus 
 done
 
+# curate Genbank files created via Prokka
+cmd=$PY_EXE $DIR/clean_prokka.py $metadata_list $output_dir
+echo "$cmd"
+$cmd || { echo 'clean_prokka.py failed!' ; exit 1; }
+
 # modify locus tag names in genbank file
 cmd=$PY_EXE $DIR/locus_mod_gbk.py $metadata_list $output_dir
 echo "$cmd"
@@ -69,7 +74,7 @@ $cmd || { echo 'ec_numbers_mod_gbk.py failed!' ; exit 1; }
 # gbk2tbl - round 1
 cmd=$PY_EXE $DIR/gbk2tbl.py $metadata_list $output_dir
 echo "$cmd"
-$cmd || { echo 'gbk2tbl.py failed!' ; exit 1; }
+$cmd || { echo 'Round 1 gbk2tbl.py failed!' ; exit 1; }
 
 # create sbt and cmt files
 cmd=perl $DIR/prepare_sbt_cmt.pl --input_file=$metadata_list --output_dir=$output_dir
@@ -77,9 +82,17 @@ echo "$cmd"
 $cmd || { echo 'prepare_sbt_cmt.pl failed!' ; exit 1; }
 
 # run tbl2asn - round 1
+cmd=perl $DIR/wrap_tbl2asn.pl --input_file=$metadata_list --output_dir=$output_dir --input_dir=$output_dir --utility_path=/usr/local/packages/tbl2asn/bin/tbl2asn --opts=
+echo "cmd"
+$cmd || { echo 'Round 1 wrap_tbl2asn.pl failed!' ; exit 1; }
+
 # delete overlapping genes
+
 # gbk2tbl - round 2
+
 # fix gene symbols in tbl file
+
+
 for locus in `awk '{print $2}' $metadata_list`; do
 	new_locus=$(echo $locus | sed 's/.$//')
 
@@ -88,6 +101,7 @@ for locus in `awk '{print $2}' $metadata_list`; do
 	echo "$cmd"
 	$cmd || { echo 'prepare_sbt_cmt.pl failed!' ; exit 1; }
 
+	echo "Organizing various 2nd-stage files"
 	# rm 2nd tbl file
 	/bin/rm $output_dir/$new_locus/${new_locus}_gs_corrected.tbl
 
@@ -100,5 +114,11 @@ for locus in `awk '{print $2}' $metadata_list`; do
 	# rename corrected agp file
 	/bin/mv $output_dir/$new_locus/${new_locus}_gs_corrected.agp $output_dir/$new_locus/${new_locus}.agp
 done
+
 # run tbl2asn - round 2
+cmd=perl $DIR/wrap_tbl2asn.pl --input_file=$metadata_list --output_dir=$output_dir --input_dir=$output_dir --utility_path=/usr/local/packages/tbl2asn/bin/tbl2asn --opts=
+echo "cmd"
+$cmd || { echo 'Round 2 wrap_tbl2asn.pl failed!' ; exit 1; }
+
+echo "Finished! Exiting now!"
 exit 0

@@ -6,6 +6,7 @@
 # Version     : 1.0									#
 # Project     :	GenBank Submisison Pipeline						#
 # Description : Script to run NCBI tbl2asn 						#
+# NOTE		  : This version of wrap_tbl2asn is to work with the db-less genbank_sumission pipeline #
 # Author      : Sonia Agrawal								#
 # Date        : February 10, 2014							#
 #											#
@@ -33,6 +34,7 @@ my $logfh;
 my ($ERROR, $WARN, $DEBUG) = (1, 2, 3);
 my ($sCmd, $sDiscrep, $sSource, $sSqnFile, $sTbl, $sFasta, $sSbt);
 my @aMeta = ();
+my %hMeta = ();
 
 ################
 # MAIN PROGRAM #
@@ -51,44 +53,48 @@ pod2usage( {-exitval => 0, -verbose => 2, -output => \*STDERR} ) if ($hCmdLineAr
 
 checkCmdLineArgs(\%hCmdLineArgs);
 
-readInput($hCmdLineArgs{'input_file'}, \@aMeta);
+readInput($hCmdLineArgs{'input_file'});
 
-$sDiscrep = $hCmdLineArgs{'output_dir'}."/".$aMeta[0]."_discrep.txt";
+# loop through all metadata lines
+foreach my $locus (scalar keys %hMeta){
+	my $aMeta = $hMeta{$locus};
+	$sDiscrep = $hCmdLineArgs{'output_dir'}."/$locus/".$locus."_discrep.txt";
 
-if(-e $hCmdLineArgs{'input_dir'} && -d $hCmdLineArgs{'input_dir'}) {
-	$sTbl = $hCmdLineArgs{'input_dir'}."/".$aMeta[0].".tbl";
-	$sFasta = $hCmdLineArgs{'input_dir'}."/".$aMeta[0].".fsa";
-	$sSbt = $hCmdLineArgs{'input_dir'}."/".$aMeta[0].".sbt";
-	if(-e $sFasta && -e $sSbt) {
-		$sSource = "[gcode=11][host=$aMeta[8]][country=$aMeta[10]][collection-date=$aMeta[9]][organism=$aMeta[5]][strain=$aMeta[6]][serotype=$aMeta[7]][isolation-source=$aMeta[19]][tech=wgs]";
-		if((-e $hCmdLineArgs{'utility_path'}) && (-x $hCmdLineArgs{'utility_path'})) {
-			$sCmd = "$hCmdLineArgs{'utility_path'} -p $hCmdLineArgs{'input_dir'} -t $sSbt -r $hCmdLineArgs{'output_dir'} -a s -V vb -X C -Z $sDiscrep -j \"$sSource\"";
-			if(defined($hCmdLineArgs{'opts'})) {
-				$sCmd = $sCmd." ".$hCmdLineArgs{'opts'};
-			}
+	if(-e $hCmdLineArgs{'input_dir'} && -d $hCmdLineArgs{'input_dir'}) {
+		$sTbl = $hCmdLineArgs{'input_dir'}."/$locus/".$locus.".tbl";
+		$sFasta = $hCmdLineArgs{'input_dir'}."/$locus/".$locus.".fsa";
+		$sSbt = $hCmdLineArgs{'input_dir'}."/$locus".$locus.".sbt";
+		if(-e $sFasta && -e $sSbt) {
+			$sSource = "[gcode=11][host=$aMeta[8]][country=$aMeta[10]][collection-date=$aMeta[9]][organism=$aMeta[5]][strain=$aMeta[6]][serotype=$aMeta[7]][isolation-source=$aMeta[19]][tech=wgs]";
+			if((-e $hCmdLineArgs{'utility_path'}) && (-x $hCmdLineArgs{'utility_path'})) {
+				$sCmd = "$hCmdLineArgs{'utility_path'} -p $hCmdLineArgs{'input_dir'} -t $sSbt -r $hCmdLineArgs{'output_dir'} -a s -V vb -X C -Z $sDiscrep -j \"$sSource\"";
+				if(defined($hCmdLineArgs{'opts'})) {
+					$sCmd = $sCmd." ".$hCmdLineArgs{'opts'};
+				}
+			} else {
+				printLogMsg($ERROR, "ERROR : Path to tbl2asn script $hCmdLineArgs{'utility_path'} is invalid or the script is not executable.");
+			}	
 		} else {
-			printLogMsg($ERROR, "ERROR : Path to tbl2asn script $hCmdLineArgs{'utility_path'} is invalid or the script is not executable.");
+			printLogMsg($ERROR, "ERROR : Specified input directory $hCmdLineArgs{'input_dir'} is missing .tbl, .fsa and/or .sbt files required for running tbl2asn.");
 		}	
 	} else {
-		printLogMsg($ERROR, "ERROR : Specified input directory $hCmdLineArgs{'input_dir'} is missing .tbl, .fsa and/or .sbt files required for running tbl2asn.");
-	}	
-} else {
-	printLogMsg($ERROR, "ERROR : Specified input directory $hCmdLineArgs{'input_dir'} does not exist or is not a valid directory.");
-}
+		printLogMsg($ERROR, "ERROR : Specified input directory $hCmdLineArgs{'input_dir'} does not exist or is not a valid directory.");
+	}
 
 
 
-printLogMsg($DEBUG, "INFO : Changing directory to output directory $hCmdLineArgs{'output_dir'}");
-my $sRet = chdir($hCmdLineArgs{'output_dir'});
+	printLogMsg($DEBUG, "INFO : Changing directory to output directory $hCmdLineArgs{'output_dir'}/$locus");
+	my $sRet = chdir($hCmdLineArgs{'output_dir'}."/$locus");
 
-printLogMsg($DEBUG, "INFO : Executing tbl2asn command :: $sCmd");
-system($sCmd);
+	printLogMsg($DEBUG, "INFO : Executing tbl2asn command :: $sCmd");
+	system($sCmd);
 
-$sSqnFile = $hCmdLineArgs{'output_dir'}."/".$aMeta[0].".sqn";
-if((-e $sSqnFile) && (-s $sSqnFile)) {
-	printLogMsg($DEBUG, "INFO : tbl2asn ran successfully created files in output directory $hCmdLineArgs{'output_dir'}");
-} else {
-	printLogMsg($ERROR, "ERROR : Error executing tbl2asn. Required files not created!")
+	$sSqnFile = $hCmdLineArgs{'output_dir'}."/$locus/".$locus.".sqn";
+	if((-e $sSqnFile) && (-s $sSqnFile)) {
+		printLogMsg($DEBUG, "INFO : tbl2asn ran successfully created files in output directory $hCmdLineArgs{'output_dir'}/$locus");
+	} else {
+		printLogMsg($ERROR, "ERROR : Error executing tbl2asn. Required files not created!")
+	}
 }
 
 ###############
@@ -106,41 +112,8 @@ if((-e $sSqnFile) && (-s $sSqnFile)) {
 #		  several databases.
 # Modifications :
 
-sub createDbDir {
-        my ($sOutDir, $sDb) = @_; 
-        my $sSubName = (caller(0))[3];
-        my $sDbDir;
-
-        $sDbDir = $sOutDir."/".$sDb;
-        if((-e $sDbDir) && (-d $sDbDir)) {
-                return(1);
-        } else {
-                if((-e $sOutDir) && (-d $sOutDir)) {
-                        if(mkdir $sDbDir) {
-                                return(1);
-                        } else {
-                                printLogMsg($ERROR, "ERROR : $sSubName :: Unable to create database specific directory within output directory $sOutDir. Reason : $!");
-                        }   
-                            
-                } else {
-                        printLogMsg($ERROR, "ERROR : $sSubName :: Provided output directory $sOutDir does not exist.");
-                }   
-        }
-}
-
-####################################################################################################################################################
-# Description   : Used to read input meta data file
-# Parameters    : sFile, paMeta
-#		  sFile - Path to input meta data file containing the information as described below
-#		  paMeta - pointer to array to hold meta data
-# Returns       : NA
-# Assumptions	: The input meta data file sFile contains only a single row with information about a single database. This script is designed to be
-#		  run interatively within an ergatis component. So it processes one DB at a time. The ergatis component itself could process 
-#		  several databases.
-# Modifications :
-
 sub readInput {
-	my ($sFile, $paMeta) = @_;
+	my ($sFile) = @_;
 	my $nI;
 	my $sLine;
 	my $fhRead;
@@ -152,7 +125,8 @@ sub readInput {
 		chomp($sLine);
 		next if($sLine =~ /^#/);
 		next if($sLine =~ /^\s+$/);
-		@{$paMeta} = split(/\t/, $sLine);
+		my $paMeta
+		@$paMeta = split(/\t/, $sLine);
 		# @meta : This script needs columns 0 and 5-10 
 #		[0] = Db name
 #		[1] = NCBI locus tag
@@ -182,6 +156,11 @@ sub readInput {
 		if($paMeta->[19] eq "NA") {
 			$paMeta->[19] = "";
 		}
+
+		# Store all metadata lines into a hash using the LOCUS as the key
+		my $locus = $paMeta->[1];
+		chop $locus if $locus =~ /_$/;
+		$hMeta{$locus} = $metadata;
 	}
 	close($fhRead);	
 }
