@@ -1,7 +1,8 @@
 #!/usr/bin/python
 
 # Script to clean various erroneous aspects of Prokka output.
-# Namely, fixing BP number in LOCUS line 
+# Namely, fixing BP number in LOCUS line and moving all the qualifiers
+# within the CDS region that belong in a separate gene field.
 
 import sys, re
 from Bio import SeqIO
@@ -11,9 +12,10 @@ out_dir = str(sys.argv[2])
 
 md = open(metadata,'r')
 
-# Decide which qualifiers to output under each feature
-gene_qualifiers = ["gene","locus_tag"]
-gquals = set(gene_qualifiers)
+regex_for_cds = r'\s+CDS\s+\d+..\d+'
+# Note that capturing coords must accept complement syntax too
+regex_for_coords = r'\s+[a-zA-Z]+\s+(.*\d+..\d+\)*)' 
+regex_for_generic = r'\s+([a-zA-Z]+)\s+\d+..\d+'
 
 # Iterate over the metadata file, one line per GBK to process
 for line in md:
@@ -43,8 +45,11 @@ for line in md:
     # Not Prokka until proven otherwise
     prokka = False
 
-    # If Prokka, need to use the CDS region info to populate a gene field
-    foundCDS = False
+    # If Prokka, need to use the rRNA/tRNA/CDS region info to populate a gene field
+    extract_gene = False
+
+    # Establish empty lists for each gene/CDS field
+    gene_entry,cdsrna_entry = ([] for i in range(2))
 
     # Now process without BioPython and relocate gene qualifiers from CDS
     # section into a separate gene section if this input is from Prokka.
@@ -57,11 +62,52 @@ for line in md:
             else:
                 outfile.write(line)
 
-        else: # Prokka file! Time to rearrange gene data embedded in CDS.
-            if foundCDS == True:
-                pass
+        else: # Prokka file! Time to rearrange gene data embedded in CDS/RNA fields.
+            if extract_gene == True:
+                if line.startswith('ORIGIN'): # reached sequence region
+                    for x in gene_entry:
+                        outfile.write(x)
+                    for x in cdsrna_entry:
+                        outfile.write(x)
+                    outfile.write(line) # write out ORIGIN line
+                    gene_entry,cdsrna_entry = ([] for i in range(2)) # reset 
+                    extract_gene = False
+
+                # Try find some field that needs gene info extracted
+                elif re.search(regex_for_generic,line):
+                    if re.search(regex_for_generic,line).group(1) != 'source':
+                        # Found a new CDS entry, add the gene / CDS lines
+                        for x in gene_entry:
+                            outfile.write(x)
+                        for x in cdsrna_entry:
+                            outfile.write(x)
+                        gene_entry,cdsrna_entry = ([] for i in range(2)) # reset 
+                        cdsrna_entry.append(line)
+                        coords = re.search(regex_for_coords,line).group(1)
+                        gene_str = ' '*5 + 'gene' + ' '*12 + coords + '\n'
+                        gene_entry.append(gene_str)
+                        extract_gene = True
+                    else:
+                        outfile.write(line)
+                        
+                else:
+                    if '/gene="' in line: 
+                        gene_entry.append(line)
+                        cdsrna_entry.append(line)
+                    elif '/locus_tag="' in line:
+                        gene_entry.append(line)
+                    else:
+                        cdsrna_entry.append(line)
             else:
-                if ' CDS ' in line:
-                    foundCDS = True
+                if re.search(regex_for_generic,line):
+                    if re.search(regex_for_generic,line).group(1) != 'source':
+                        # Grab 'headers' for both gene and other field
+                        cdsrna_entry.append(line)
+                        coords = re.search(regex_for_coords,line).group(1)
+                        gene_str = ' '*5 + 'gene' + ' '*12 + coords + '\n'
+                        gene_entry.append(gene_str)
+                        extract_gene = True
+                    else:
+                        outfile.write(line)
                 else:
                     outfile.write(line)
