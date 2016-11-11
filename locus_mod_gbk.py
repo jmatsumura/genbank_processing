@@ -16,13 +16,17 @@ for line in md:
     line = line.strip('\n') 
     md_vals = line.split('\t')
 
-    locus = md_vals[1] # pull locus prefix
+    locus = ""
+    if md_vals[1][-1:] == "_": # trim underscore if present
+        locus = md_vals[1][:-1]
+    else:
+        locus = md_vals[1]
 
-    gbk_in = "%s/%s/cleaned.gbk" % (out_dir,md_vals[1][:-1])
+    gbk_in = "%s/%s/cleaned.gbk" % (out_dir,locus)
     gbk = open(gbk_in,'r') # pull input GBK
 
     # Make a new file name for the outfile
-    gbk_out = "%s/%s/locus_mod.gbk" % (out_dir,md_vals[1][:-1]) # use the locus as GBK file name
+    gbk_out = "%s/%s/locus_mod.gbk" % (out_dir,locus) # use the locus as GBK file name
     outfile = open(gbk_out,'w')
 
     for l in gbk:

@@ -160,6 +160,8 @@ sub readInput {
 		# Store all metadata lines into a hash using the LOCUS as the key
 		my $locus = $paMeta->[1];
 		chop $locus if $locus =~ /_$/;
+		# Reassign this, potentially modified, value to the metadata for future use in file name creation
+		$paMeta->[1] = $locus;
 		$hMeta{$locus} = $paMeta;
 	}
 	close($fhRead);	

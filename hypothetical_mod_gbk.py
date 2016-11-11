@@ -24,11 +24,17 @@ for line in md:
     line = line.strip('\n') 
     md_vals = line.split('\t')
 
-    gbk_in = "%s/%s/common_name_mod.gbk" % (out_dir,md_vals[1][:-1])
+    locus = ""
+    if md_vals[1][-1:] == "_": # trim underscore if present
+        locus = md_vals[1][:-1]
+    else:
+        locus = md_vals[1]
+
+    gbk_in = "%s/%s/common_name_mod.gbk" % (out_dir,locus)
     gbk = open(gbk_in,'r') # pull input GBK
 
     # Make a new file name for the outfile
-    gbk_out = "%s/%s/hypothetical_mod.gbk" % (out_dir,md_vals[1][:-1])
+    gbk_out = "%s/%s/hypothetical_mod.gbk" % (out_dir,locus)
     outfile = open(gbk_out,'w')
 
     between_gene_and_product = False

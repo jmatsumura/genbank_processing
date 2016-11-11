@@ -20,11 +20,17 @@ for line in md:
     line = line.strip('\n') 
     md_vals = line.split('\t')
 
+    locus = ""
+    if md_vals[1][-1:] == "_": # trim underscore if present
+        locus = md_vals[1][:-1]
+    else:
+        locus = md_vals[1]
+
     gbk = open(md_vals[0],'rU') # pull input GBK
 
     # Intermediate, kind of clean file (formatting length). This
     # also serves as an early warning for any errors determined by BioPython
-    fixed_length = "%s/%s/intermediate.gbk" % (out_dir,md_vals[1][:-1])
+    fixed_length = "%s/%s/intermediate.gbk" % (out_dir,locus)
     firstfile = open(fixed_length,'w')
 
     records = SeqIO.parse(gbk, 'genbank') # get all GBK entries
@@ -37,7 +43,7 @@ for line in md:
     gbk = open(fixed_length,'r')
 
     # Make cleaned GBK file which has been reformatted.
-    cleaned_out = "%s/%s/cleaned.gbk" % (out_dir,md_vals[1][:-1])
+    cleaned_out = "%s/%s/cleaned.gbk" % (out_dir,locus)
     outfile = open(cleaned_out,'w')
 
     # Not Prokka until proven otherwise

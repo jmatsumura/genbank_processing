@@ -39,7 +39,13 @@ for line in md:
     line = line.strip('\n') 
     md_vals = line.split('\t')
 
-    gbk_in = "%s/%s/gene_symbol_mod.gbk" % (out_dir,md_vals[1][:-1])
+    locus = ""
+    if md_vals[1][-1:] == "_": # trim underscore if present
+        locus = md_vals[1][:-1]
+    else:
+        locus = md_vals[1]
+
+    gbk_in = "%s/%s/gene_symbol_mod.gbk" % (out_dir,locus)
     gbk = open(gbk_in,'r') # pull input GBK
 
     # Now grab all the EC numbers that are to be deleted noted by the metadata file. 
@@ -51,7 +57,7 @@ for line in md:
     delete_us = set(ecs_to_delete)
 
     # Make a new file name for the outfile
-    gbk_out = "%s/%s/ec_numbers_mod.gbk" % (out_dir,md_vals[1][:-1])
+    gbk_out = "%s/%s/ec_numbers_mod.gbk" % (out_dir,locus)
     outfile = open(gbk_out,'w')
 
     for l in gbk:

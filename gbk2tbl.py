@@ -28,13 +28,19 @@ for line in md:
     line = line.strip('\n') 
     md_vals = line.split('\t')
 
-    gbk_in = "%s/%s/cleaned.gbk" % (out_dir,md_vals[1][:-1])
+    locus = ""
+    if md_vals[1][-1:] == "_": # trim underscore if present
+        locus = md_vals[1][:-1]
+    else:
+        locus = md_vals[1]
+
+    gbk_in = "%s/%s/cleaned.gbk" % (out_dir,locus)
     gbk = open(gbk_in,'rU') # pull input GBK
 
     # Make new TBL and FSA files which are needed for tbl2asn
-    tbl_out = "%s/%s/out.tbl" % (out_dir,md_vals[1][:-1])
+    tbl_out = "%s/%s/%s.tbl" % (out_dir,locus,locus)
     tbl_outfile = open(tbl_out,'w')
-    fsa_out = "%s/%s/out.fsa" % (out_dir,md_vals[1][:-1])
+    fsa_out = "%s/%s/%s.fsa" % (out_dir,locus,locus)
     fsa_outfile = open(fsa_out,'w')
 
     records = SeqIO.parse(gbk, 'genbank') # get all GBK entries
