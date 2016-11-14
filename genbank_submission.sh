@@ -42,57 +42,57 @@ for locus in `awk '{print $2}' $metadata_list`; do
 done
 
 # curate Genbank files created via Prokka
-cmd="$PY_EXE $DIR/clean_prokka.py $metadata_list $output_dir"
+cmd="$PY_EXE $DIR/clean_prokka_gbk.py $metadata_list $output_dir"
 echo "$cmd"
-$cmd || { echo 'clean_prokka.py failed!' ; exit 1; }
+$cmd || { echo 'clean_prokka_gbk.py failed!' ; exit 1; }
 
 # modify locus tag names in genbank file
-cmd=$PY_EXE $DIR/locus_mod_gbk.py $metadata_list $output_dir
+cmd="$PY_EXE $DIR/locus_mod_gbk.py $metadata_list $output_dir"
 echo "$cmd"
 $cmd || { echo 'locus_mod_gbk.py failed!' ; exit 1; }
 
 # curate common names in genbank file
-cmd=$PY_EXE $DIR/common_name_mod_gbk.py $metadata_list $output_dir
+cmd="$PY_EXE $DIR/common_name_mod_gbk.py $metadata_list $output_dir"
 echo "$cmd"
 $cmd || { echo 'common_name_mod_gbk.py failed!' ; exit 1; }
 
 # remove hypotheticals in genbank file
-cmd=$PY_EXE $DIR/hypothetical_mod_gbk.py $metadata_list $output_dir
+cmd="$PY_EXE $DIR/hypothetical_mod_gbk.py $metadata_list $output_dir"
 echo "$cmd"
 $cmd || { echo 'hypothetical_mod_gbk.py failed!' ; exit 1; }
 
 # modify gene symbols in genbank file
-cmd=$PY_EXE $DIR/gene_symbol_mod_gbk.py $metadata_list $output_dir
+cmd="$PY_EXE $DIR/gene_symbol_mod_gbk.py $metadata_list $output_dir"
 echo "$cmd"
 $cmd || { echo 'gene_symbol_mod_gbk.py failed!' ; exit 1; }
 
 # modify EC numbers in genbank file
-cmd=$PY_EXE $DIR/ec_numbers_mod_gbk.py $metadata_list $output_dir $EC_DAT
+cmd="$PY_EXE $DIR/ec_numbers_mod_gbk.py $metadata_list $output_dir $EC_DAT"
 echo "$cmd"
 $cmd || { echo 'ec_numbers_mod_gbk.py failed!' ; exit 1; }
 
 # gbk2tbl - round 1
-cmd=$PY_EXE $DIR/gbk2tbl.py $metadata_list $output_dir
+cmd="$PY_EXE $DIR/gbk2tbl.py $metadata_list $output_dir"
 echo "$cmd"
 $cmd || { echo 'Round 1 gbk2tbl.py failed!' ; exit 1; }
 
 # create sbt and cmt files
-cmd=perl $DIR/prepare_sbt_cmt.pl --input_file=$metadata_list --output_dir=$output_dir
+cmd="perl $DIR/prepare_sbt_cmt.pl --input_file=$metadata_list --output_dir=$output_dir"
 echo "$cmd"
 $cmd || { echo 'prepare_sbt_cmt.pl failed!' ; exit 1; }
 
 # run tbl2asn - round 1
-cmd=perl $DIR/wrap_tbl2asn.pl --input_file=$metadata_list --output_dir=$output_dir --input_dir=$output_dir --utility_path=/usr/local/packages/tbl2asn/bin/tbl2asn --opts=
+cmd="perl $DIR/wrap_tbl2asn.pl --input_file=$metadata_list --output_dir=$output_dir --input_dir=$output_dir --utility_path=/usr/local/packages/tbl2asn/bin/tbl2asn --opts="
 echo "cmd"
 $cmd || { echo 'Round 1 wrap_tbl2asn.pl failed!' ; exit 1; }
 
 # delete overlapping genes
-cmd=$PY_EXE $DIR/del_overlapping_genes.py $metadata_list $output_dir $discrep_file	# CHANGE THINGS AS NEEDED
+cmd="$PY_EXE $DIR/delete_overlap_mod_gbk.py $metadata_list $output_dir $discrep_file"	# CHANGE THINGS AS NEEDED
 echo "$cmd"
-$cmd || { echo 'del_overlapping_genes.py failed!' ; exit 1; }
+$cmd || { echo 'delete_overlap_mod_gbk.py failed!' ; exit 1; }
 
 # gbk2tbl - round 2
-cmd=$PY_EXE $DIR/gbk2tbl.py $metadata_list $output_dir
+cmd="$PY_EXE $DIR/gbk2tbl.py $metadata_list $output_dir"
 echo "$cmd"
 $cmd || { echo 'Round 2 gbk2tbl.py failed!' ; exit 1; }
 
@@ -101,12 +101,12 @@ for locus in `awk '{print $2}' $metadata_list`; do
 	new_locus=$(echo $locus | sed 's/.$//')
 
 	# fix gene symbols in tbl file
-	cmd=perl $DIR/gene_symbol_mod_tbl.pl --input_file=$metadata_list --output_dir=$output_dir/$new_locus --tbl_file=$output_dir/$new_locus/${new_locus}.tbl
+	cmd="perl $DIR/gene_symbol_mod_tbl.pl --input_file=$metadata_list --output_dir=$output_dir/$new_locus --tbl_file=$output_dir/$new_locus/${new_locus}.tbl"
 	echo "$cmd"
 	$cmd || { echo 'gene_symbol_mod_tbl.pl failed!' ; exit 1; }
 
 	# create agp file
-	cmd=perl $DIR/format_velvet_assembled_AGP.pl --tbl_file=$output_dir/$new_locus/${new_locus}_gs_corrected.tbl --fsa_file=$output_dir/$new_locus/${new_locus}.fsa --split_param=10 --min_contig_len=200 --output_dir=$output_dir/$new_locus
+	cmd="perl $DIR/format_velvet_assembled_AGP.pl --tbl_file=$output_dir/$new_locus/${new_locus}_gs_corrected.tbl --fsa_file=$output_dir/$new_locus/${new_locus}.fsa --split_param=10 --min_contig_len=200 --output_dir=$output_dir/$new_locus"
 	echo "$cmd"
 	$cmd || { echo 'prepare_sbt_cmt.pl failed!' ; exit 1; }
 
@@ -125,7 +125,7 @@ for locus in `awk '{print $2}' $metadata_list`; do
 done
 
 # run tbl2asn - round 2
-cmd=perl $DIR/wrap_tbl2asn.pl --input_file=$metadata_list --output_dir=$output_dir --input_dir=$output_dir --utility_path=/usr/local/packages/tbl2asn/bin/tbl2asn --opts=
+cmd="perl $DIR/wrap_tbl2asn.pl --input_file=$metadata_list --output_dir=$output_dir --input_dir=$output_dir --utility_path=/usr/local/packages/tbl2asn/bin/tbl2asn --opts="
 echo "cmd"
 $cmd || { echo 'Round 2 wrap_tbl2asn.pl failed!' ; exit 1; }
 
