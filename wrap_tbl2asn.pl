@@ -63,11 +63,11 @@ foreach my $locus (keys %hMeta){
 	if(-e $hCmdLineArgs{'input_dir'} && -d $hCmdLineArgs{'input_dir'}) {
 		$sTbl = $hCmdLineArgs{'input_dir'}."/$locus/".$locus.".tbl";
 		$sFasta = $hCmdLineArgs{'input_dir'}."/$locus/".$locus.".fsa";
-		$sSbt = $hCmdLineArgs{'input_dir'}."/$locus".$locus.".sbt";
+		$sSbt = $hCmdLineArgs{'input_dir'}."/$locus/".$locus.".sbt";
 		if(-e $sFasta && -e $sSbt) {
 			$sSource = "[gcode=11][host=$aMeta[8]][country=$aMeta[10]][collection-date=$aMeta[9]][organism=$aMeta[5]][strain=$aMeta[6]][serotype=$aMeta[7]][isolation-source=$aMeta[19]][tech=wgs]";
 			if((-e $hCmdLineArgs{'utility_path'}) && (-x $hCmdLineArgs{'utility_path'})) {
-				$sCmd = "$hCmdLineArgs{'utility_path'} -p $hCmdLineArgs{'input_dir'} -t $sSbt -r $hCmdLineArgs{'output_dir'} -a s -V vb -X C -Z $sDiscrep -j \"$sSource\"";
+				$sCmd = "$hCmdLineArgs{'utility_path'} -p $hCmdLineArgs{'input_dir'}/$locus -t $sSbt -r $hCmdLineArgs{'output_dir'}/$locus -a s -V vb -X C -Z $sDiscrep -j \"$sSource\"";
 				if(defined($hCmdLineArgs{'opts'})) {
 					$sCmd = $sCmd." ".$hCmdLineArgs{'opts'};
 				}

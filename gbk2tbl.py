@@ -34,7 +34,7 @@ for line in md:
     else:
         locus = md_vals[1]
 
-    gbk_in = "%s/%s/cleaned.gbk" % (out_dir,locus)
+    gbk_in = "%s/%s/ec_numbers_mod.gbk" % (out_dir,locus)
     gbk = open(gbk_in,'rU') # pull input GBK
 
     # Make new TBL and FSA files which are needed for tbl2asn
