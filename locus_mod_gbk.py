@@ -9,7 +9,7 @@ out_dir = str(sys.argv[2])
 
 md = open(metadata,'r')
 
-regex_for_locus = r'\s+/locus_tag="(.*_)\d+"'
+regex_for_locus = r'\s+/locus_tag="(.*)_\d+"'
 
 # Iterate over the metadata file, one line per GBK to process
 for line in md:
