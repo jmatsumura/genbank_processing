@@ -15,6 +15,9 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 # Path to used Expasy enzyme database file
 EC_DAT=/local/projects/aengine/bin/enzyme.dat
 
+export PATH=/usr/local/packages/python-3.5.1/bin:$PATH
+export LD_LIBRARY_PATH=/usr/local/packages/python-3.5.1/lib:$LD_LIBRARY_PATH
+
 while [[ $# -ge 1 ]]
 do
 i="$1"
@@ -39,7 +42,7 @@ for locus in `awk '{print $2}' $metadata_list`; do
 done
 
 # curate Genbank files created via Prokka
-cmd=$PY_EXE $DIR/clean_prokka.py $metadata_list $output_dir
+cmd="$PY_EXE $DIR/clean_prokka.py $metadata_list $output_dir"
 echo "$cmd"
 $cmd || { echo 'clean_prokka.py failed!' ; exit 1; }
 
