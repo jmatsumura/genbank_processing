@@ -10,6 +10,12 @@ import sys, re
 def printName(name,out): # need some handling in case of multi-line
     base = " " * 21 + "/product=" # first line
     blank_base = " " * 21 # non-first lines
+
+    # Here replace some common errors found in product names
+    name = name.replace('sulphide','sulfide')
+    name = name.replace('sulphur','sulfur')
+    name = name.replace(' fibre ',' fiber ')
+
     if len(name) < 48: # good to go, can print on one line
         final = '%s"%s"\n' % (base,name)
         out.write(final)
