@@ -13,21 +13,38 @@ def printName(name,out): # need some handling in case of multi-line
     if len(name) < 48: # good to go, can print on one line
         final = '%s"%s"\n' % (base,name)
         out.write(final)
-    else: # need to do a multi-line print
-        n = 57
-        first_line = '%s"%s\n' % (base,name[0:48]) # get first 49 characters
-        out.write(first_line) 
 
-        name_list = [name[i:i+n] for i in range(48, len(name), n)] # build in chunks of size 57
-        end = (len(name_list) - 1) # the end
+    # If greater than that length, need to do a multi-line print. Note
+    # that this approach does not absolutely maximize line length, but 
+    # arbitrarily does not permit this region to extend beyond the ~70 
+    # character mark. 
+    else: 
 
-        for i in range(0, len(name_list)):
-            if i == end: 
-                final_line = '%s%s"\n' % (blank_base,name_list[end])
-                out.write(final_line)
-            else:
-                middle_line = '%s%s\n' % (blank_base,name_list[i])
-                out.write(middle_line)
+        max_len = 47
+        words = name.split(' ')
+        multi_line = [] # store all the lines in the product qualifier
+        single_line = [] # store just the current line being built
+
+        for x in words:
+            if not (len(' '.join(single_line)) + len(x)) > max_len: # if i can fit, add it
+                single_line.append(x)
+            else: # too long, add to multi-line and build a new one
+                multi_line.append(' '.join(single_line))
+                single_line = []
+                single_line.append(x)
+
+        multi_line.append(' '.join(single_line))
+
+        for j in range(0,len(multi_line)):
+            line = ""
+            if j == 0: # first line
+                line = '%s"%s\n' % (base,multi_line[j])
+            elif j == (len(multi_line)-1): # last line
+                line = '%s%s"\n' % (blank_base,multi_line[j])
+            else: # middle line
+                line = '%s%s\n' % (blank_base,multi_line[j])
+            out.write(line)
+
 
 # Function to build a name from a multi-line product in a GBK file. 
 # Accepts the list of lines consisting of the product names, which
@@ -95,7 +112,7 @@ for line in md:
                 found_product = True
 
         elif found_product == True: # multi-line product
-            if "/translation=" in l: # reached the end of the product, resolve it and leave
+            if "/translation=" in l or "/transl_table=" in l: # reached the end of the product, resolve it and leave
                 printName(resolveName(multi_product,name_map),outfile)
                 outfile.write(l)
                 found_product = False # reinitialize all for next multi-line product
