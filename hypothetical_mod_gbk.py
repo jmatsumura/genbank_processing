@@ -55,7 +55,7 @@ for line in md:
                 g_to_p_list.append(l) # add product (potentially modified)
 
                 for x in g_to_p_list:
-                    if ("/gene=" in x or "/EC=" in x) and hypothetical_found == True: # ignore gene symbols/EC nums if hypothetical
+                    if ("/gene=" in x or "/EC_number=" in x) and hypothetical_found == True: # ignore gene symbols/EC nums if hypothetical
                         pass
                     else:
                         outfile.write(x)
