@@ -10,6 +10,7 @@ from Bio import SeqIO
 
 metadata = str(sys.argv[1])
 out_dir = str(sys.argv[2])
+phase_1_or_2 = str(sys.argv[3])
 
 md = open(metadata,'r')
 
@@ -34,7 +35,12 @@ for line in md:
     else:
         locus = md_vals[1]
 
-    gbk_in = "%s/%s/ec_numbers_mod.gbk" % (out_dir,locus)
+    gbk_in = ""
+    if phase_1_or_2 == '1':
+        gbk_in = "%s/%s/ec_numbers_mod.gbk" % (out_dir,locus)
+    elif phase_1_or_2 == '2':
+        gbk_in = "%s/%s/delete_overlap_mod_gbk.gbk" % (out_dir,locus)
+
     gbk = open(gbk_in,'rU') # pull input GBK
 
     # Make new TBL and FSA files which are needed for tbl2asn

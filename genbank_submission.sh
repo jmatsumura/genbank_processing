@@ -72,7 +72,7 @@ echo "$cmd"
 $cmd || { echo 'ec_numbers_mod_gbk.py failed!' ; exit 1; }
 
 # gbk2tbl - round 1
-cmd="$PY_EXE $DIR/gbk2tbl.py $metadata_list $output_dir"
+cmd="$PY_EXE $DIR/gbk2tbl.py $metadata_list $output_dir 1"
 echo "$cmd"
 $cmd || { echo 'Round 1 gbk2tbl.py failed!' ; exit 1; }
 
@@ -92,7 +92,7 @@ echo "$cmd"
 $cmd || { echo 'delete_overlap_mod_gbk.py failed!' ; exit 1; }
 
 # gbk2tbl - round 2
-cmd="$PY_EXE $DIR/gbk2tbl.py $metadata_list $output_dir"
+cmd="$PY_EXE $DIR/gbk2tbl.py $metadata_list $output_dir 2"
 echo "$cmd"
 $cmd || { echo 'Round 2 gbk2tbl.py failed!' ; exit 1; }
 
