@@ -10,7 +10,6 @@ out_dir = str(sys.argv[2])
 
 md = open(metadata,'r')
 
-cds_and_rna = ["rRNA","tRNA","CDS"] # these fields share the same quals
 regex_for_gene = r'^\s+gene\s+[complement]*\(*\d+..\d+\)*'
 regex_for_locus = r'^\s+/locus_tag="(.*)"'
 
@@ -34,7 +33,7 @@ for line in md:
     gbk = open(gbk_in,'r')
 
     # Write out a gbk file with overlaps deleted (if any are present)
-    out = "%s/%s/delete_overlap_mod.gbk" % (out_dir,locus,locus)
+    out = "%s/%s/delete_overlap_mod.gbk" % (out_dir,locus)
     outfile = open(out,'w')
 
     overlap = False
