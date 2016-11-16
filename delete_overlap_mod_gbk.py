@@ -11,6 +11,7 @@ out_dir = str(sys.argv[2])
 md = open(metadata,'r')
 
 regex_for_gene = r'^\s+gene\s+[complement]*\(*\d+..\d+\)*'
+regex_for_rna = r'^\s+[a-z]*RNA\s+[complement]*\(*\d+..\d+\)*'
 regex_for_locus = r'^\s+/locus_tag="(.*)"'
 
 # Iterate over the metadata file, one line per GBK to process
@@ -61,6 +62,7 @@ for line in md:
                     delete_us.append(elements[-1]) # grab the locus tag to delete
 
     within_gene = False
+    rna_within = False
     gene_region = []
 
     # Iterate over the GBK file and skip any gene entries that are found entirely
@@ -81,8 +83,13 @@ for line in md:
                 for ele in gene_region:
                     if "/locus_tag" in ele:
                         locus = re.search(regex_for_locus,ele).group(1)
+                    elif re.search(regex_for_rna,ele):
+                        rna_within = True
 
-                if locus in delete_us: # if it is to be deleted, just skip
+                if rna_within = True:
+                    for ele in gene_region:
+                        outfile.write(ele)
+                elif locus in delete_us: # if it is to be deleted, just skip
                     pass
                 else:
                     for ele in gene_region:
@@ -90,6 +97,7 @@ for line in md:
 
                 # Reinitialize
                 within_gene = False
+                rna_within = False
                 gene_region = []
 
                 if line.startswith('ORIGIN'):
