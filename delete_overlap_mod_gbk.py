@@ -1,7 +1,11 @@
 
 
-# Script to delete completely overlapping CDS regions. Note that any RNA involved
-# in the overlap regions will not be removed, just a CDS within another CDS. 
+# Script to delete completely overlapping CDS regions. Explicitly, this means the
+# following will be deleted:
+# 1) A CDS entirely within a CDS
+# 2) A CDS entirely within a xRNA
+# The following will not be deleted:
+# 1) A xRNA entirely within a CDS
 
 import sys, re
 
