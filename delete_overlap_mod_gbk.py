@@ -86,7 +86,7 @@ for line in md:
                     elif re.search(regex_for_rna,ele):
                         rna_within = True
 
-                if rna_within = True:
+                if rna_within == True:
                     for ele in gene_region:
                         outfile.write(ele)
                 elif locus in delete_us: # if it is to be deleted, just skip
