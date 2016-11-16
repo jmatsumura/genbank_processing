@@ -12,7 +12,8 @@
 # "ls -d -1 $PWD/*.*" in the directory of your gbk/gbff files. 
 # Use output redirection (">" or ">>") to build a final file For
 # multiple paths, making sure that the file name can be tied 
-# exactly to column 1 of the metadata file. 
+# exactly to the first column of the metadata file (others 
+# are irrelevant for the purposes of this script). 
 #
 # Run this script like so:
 # python add_files_to_metadata.py input_metadata.tsv file_path_list.txt /path/to/outputfile.txt

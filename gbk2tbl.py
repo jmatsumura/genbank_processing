@@ -39,7 +39,7 @@ for line in md:
     if phase_1_or_2 == '1':
         gbk_in = "%s/%s/ec_numbers_mod.gbk" % (out_dir,locus)
     elif phase_1_or_2 == '2':
-        gbk_in = "%s/%s/delete_overlap_mod_gbk.gbk" % (out_dir,locus)
+        gbk_in = "%s/%s/delete_overlap_mod.gbk" % (out_dir,locus)
 
     gbk = open(gbk_in,'rU') # pull input GBK
 
