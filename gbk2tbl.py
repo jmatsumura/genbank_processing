@@ -75,8 +75,8 @@ for line in md:
                 end = f.location.end
                 # If partial detected in start, need to add 1 to number value
                 # explicilty to guarantee persistence of "<"
-                if "<" in f.location.start:
-                    num = f.location.start[1:]
+                if "<" in str(f.location.start):
+                    num = str(f.location.start)[1:]
                     start = "<%s" % (int(num)+1)
                 else:
                     start = f.location.start + 1
