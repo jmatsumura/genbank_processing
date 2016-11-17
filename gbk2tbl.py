@@ -24,6 +24,8 @@ crquals = set(cds_or_rna_output_qualifiers)
 
 cds_and_rna = ["rRNA","tRNA","CDS"] # these fields share the same quals
 
+regex_for_coords = r'\[(<?(\d+)):(>?\d+)\]'
+
 # Iterate over the metadata file, one line per GBK to process
 for line in md:
     line = line.strip('\n') 
@@ -71,10 +73,26 @@ for line in md:
                 pass
             else: 
                 coords = ""
+                start = "" # strings due to potential partial signs (< & >)
+                end = "" 
+                # BioPython seems inconsistent in how to pull partials, thus do it
+                # manually by parsing through the location data which looks something 
+                # like: [123:456](+) or [<123:456](-) or [123:>456](+)
+                loc = str(f.location)
+                end = re.search(regex_for_coords,loc).group(3)
+
+                # If partial is present, need to increment the number value 
+                # then build the final string for the start position.
+                if re.search(regex_for_coords,loc).group(1) != re.search(regex_for_coords,loc).group(2):
+                    pos = int(re.search(regex_for_coords,loc).group(2)) + 1
+                    start = "<%s" % (pos)
+                else: # no partial character captured
+                    start = int(re.search(regex_for_coords,loc).group(2)) + 1
+
                 if f.strand == 1:
-                    coords = "%d\t%d\t%s\n" % (f.location.nofuzzy_start + 1, f.location.nofuzzy_end, f.type)
+                    coords = "%d\t%d\t%s\n" % (start, end, f.type)
                 else:
-                    coords = "%d\t%d\t%s\n" % (f.location.nofuzzy_end, f.location.nofuzzy_start + 1, f.type)
+                    coords = "%d\t%d\t%s\n" % (end, start, f.type)
                 tbl_outfile.write(coords)
 
             # Append protein_id here if it is present

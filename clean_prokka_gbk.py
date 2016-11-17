@@ -13,7 +13,7 @@ out_dir = str(sys.argv[2])
 md = open(metadata,'r')
 
 # Note that capturing coords must accept complement syntax too
-regex_for_coord_string = r'^\s+([a-zA-Z]+)\s+([complement]*\(*\d+..\d+\)*)'
+regex_for_coord_string = r'^\s+([a-zA-Z]+)\s+([complement]?\(?<?\d+..>?\d+\)?)'
 
 # Iterate over the metadata file, one line per GBK to process
 for line in md:
