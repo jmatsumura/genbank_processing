@@ -72,7 +72,7 @@ for line in md:
             else: 
                 coords = ""
                 start = "" # start/end are strings due to potential partial signs (< & >)
-                end = f.location.end
+                end = str(f.location.end)
                 # If partial detected in start, need to add 1 to number value
                 # explicilty to guarantee persistence of "<"
                 if "<" in str(f.location.start):
@@ -84,6 +84,12 @@ for line in md:
                 if f.strand == 1:
                     coords = "%s\t%s\t%s\n" % (start, end, f.type)
                 else:
+                    # TBL expects slight rearrangement of the partial symbols
+                    # if dealing with a complement from GBK.
+                    if end.startswith(">"):
+                        end = end.replace(">","<")
+                    if start.startswith("<"):
+                        start = start.replace("<",">")
                     coords = "%s\t%s\t%s\n" % (end, start, f.type)
                 tbl_outfile.write(coords)
 
