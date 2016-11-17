@@ -70,8 +70,8 @@ for line in md:
             if f.type == 'source':
                 pass
             else: 
-                coords = ""
-                start = "" # start/end are strings due to potential partial signs (< & >)
+                # start/end should be strings due to potential partial signs (< & >)
+                coords,start,end = ("" for i in range(3))
                 end = str(f.location.end)
                 # If partial detected in start, need to add 1 to number value
                 # explicilty to guarantee persistence of "<"
@@ -79,7 +79,7 @@ for line in md:
                     num = str(f.location.start)[1:]
                     start = "<%s" % (int(num)+1)
                 else:
-                    start = f.location.start + 1
+                    start = str(f.location.start + 1)
 
                 if f.strand == 1:
                     coords = "%s\t%s\t%s\n" % (start, end, f.type)
