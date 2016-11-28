@@ -42,7 +42,8 @@ for row in md:
     row = row.strip('\n')
     elements = row.split('\t')
     if elements[0] not in map:
-        print "ERROR. First column value not found in file path list."
+        out = "ERROR. First column value ({}) not found in file path list.".format(elements[0])
+        print(out)
     else:
         elements[0] = map[elements[0]]
     out.write('\t'.join(elements))
