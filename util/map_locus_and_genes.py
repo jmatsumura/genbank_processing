@@ -64,10 +64,7 @@ def isolate_locus_and_coords(gbk):
                 coords = re.search(regex_for_coord_string,line).group(1)
                 cds_found = True
                 
-
-
     return map
-
 
 # Find the modified coordinates
 emap = isolate_locus_and_coords(e)
@@ -87,5 +84,6 @@ for k1,v1 in emap.iteritems():
     lt1 = e1[1] # grab locus tag
     l2 = e2[0]
     lt2 = e2[1]
+    # output locus(new),locus_tag(new),locus(old),locus_tag(old),coordinates
     outstr = "%s\t%s\t%s\t%s\t%s\n" % (l1,lt1,l2,lt2,k1)
     o.write(outstr)
