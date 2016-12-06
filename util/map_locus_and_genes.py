@@ -31,7 +31,7 @@ emap,bmap = ({} for i in range(2))
 
 regex_for_coord_string = r'^\s+CDS\s+((complement)?\(?<?\d+..>?\d+\)?)'
 regex_for_locus_tag = r'^\s+/locus_tag="(.*)"'
-regex_for_locus = r'^LOCUS\s+([A-Z0-9_]+)\s+'
+regex_for_locus = r'^LOCUS\s+([a-zA-Z0-9_\.]+)\s+'
 
 def isolate_locus_and_coords(gbk):
     locus,coords,ltag = ("" for i in range(3))
