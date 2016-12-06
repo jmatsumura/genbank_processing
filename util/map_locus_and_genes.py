@@ -31,7 +31,7 @@ emap,bmap = ({} for i in range(2))
 
 regex_for_coord_string = r'^\s+CDS\s+((complement)?\(?<?\d+..>?\d+\)?)'
 regex_for_locus_tag = r'^\s+/locus_tag="(.*)"'
-regex_for_locus = r'^LOCUS\s+([a-zA-Z0-9_\.]+)\s+'
+regex_for_locus_and_bp = r'^LOCUS\s+([a-zA-Z0-9_\.]+)\s+([0-9]+\sbp)'
 
 def isolate_locus_and_coords(gbk):
     locus,coords,ltag = ("" for i in range(3))
@@ -44,14 +44,16 @@ def isolate_locus_and_coords(gbk):
         if line.startswith('LOCUS') and within_locus == False:
             within_locus = True
             # Grab locus
-            locus = re.search(regex_for_locus,line).group(1)
+            locus = re.search(regex_for_locus_and_bp,line).group(1)
+            length = re.search(regex_for_locus_and_bp,line).group(2)
 
         elif within_locus == True:
             if line.startswith('ORIGIN'):
                 within_locus = False
             elif cds_found == True and ltag_found == True:
-                if coords not in map:
-                    map[coords] = "%s+%s" % (locus,ltag)
+                unique_id = "%s%s" % (length,coords) # unique id of contig length + coords
+                if unique_id not in map:
+                    map[unique_id] = "%s+%s" % (locus,ltag)
                 else:
                     print "ERROR, duplicates coords across loci: %s" % (coords)
                 cds_found,ltag_found = (False for i in range(2))
