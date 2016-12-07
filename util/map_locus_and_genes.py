@@ -50,8 +50,8 @@ def isolate_locus_and_coords(gbk):
 
         elif within_locus == True:
             if line.startswith('ORIGIN'):
-                within_locus = False
-            elif cds_found == True and ltag_found == True and translation_found == True:
+                within_locus = False # leave at this point, but still append to map
+            if cds_found == True and ltag_found == True and translation_found == True:
                 unique_id = "%s|%s|%s" % (length,coords,translation) # unique id of contig length + coords
                 if unique_id not in map:
                     map[unique_id] = "%s+%s" % (locus,ltag)
