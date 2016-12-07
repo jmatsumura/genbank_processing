@@ -32,11 +32,12 @@ emap,bmap = ({} for i in range(2))
 regex_for_coord_string = r'^\s+CDS\s+((complement)?\(?<?\d+..>?\d+\)?)'
 regex_for_locus_tag = r'^\s+/locus_tag="(.*)"'
 regex_for_locus_and_bp = r'^LOCUS\s+([a-zA-Z0-9_\.]+)\s+([0-9]+\sbp)'
+regex_for_translation = r'^\s+/translation="([A-Z]+)'
 
 def isolate_locus_and_coords(gbk):
-    locus,coords,ltag = ("" for i in range(3))
+    locus,coords,ltag,translation = ("" for i in range(4))
     map = {}
-    within_locus,cds_found,ltag_found = (False for i in range(3))
+    within_locus,cds_found,ltag_found,translation_found = (False for i in range(4))
 
     for line in gbk:
         line = line.strip('\n')
@@ -50,13 +51,13 @@ def isolate_locus_and_coords(gbk):
         elif within_locus == True:
             if line.startswith('ORIGIN'):
                 within_locus = False
-            elif cds_found == True and ltag_found == True:
-                unique_id = "%s%s" % (length,coords) # unique id of contig length + coords
+            elif cds_found == True and ltag_found == True and translation_found == True:
+                unique_id = "%s|%s|%s" % (length,coords,translation) # unique id of contig length + coords
                 if unique_id not in map:
                     map[unique_id] = "%s+%s" % (locus,ltag)
                 else:
-                    print "ERROR, duplicates coords across loci: %s" % (coords)
-                cds_found,ltag_found = (False for i in range(2))
+                    print "ERROR, duplicates found across loci using key (contig_length|coords|translation): %s" % (unique_id)
+                cds_found,ltag_found,translation_found = (False for i in range(3))
             elif "/locus_tag" in line:
                 # Grab locus tag
                 ltag = re.search(regex_for_locus_tag,line).group(1)
@@ -65,6 +66,10 @@ def isolate_locus_and_coords(gbk):
                 # Get CDS coordinate
                 coords = re.search(regex_for_coord_string,line).group(1)
                 cds_found = True
+            elif re.search(regex_for_translation,line):
+                # Get the translation sequence to make an even more unique key
+                translation = re.search(regex_for_translation,line).group(1)
+                translation_found = True
                 
     return map
 
@@ -75,11 +80,15 @@ emap = isolate_locus_and_coords(e)
 bmap = isolate_locus_and_coords(b)
 
 # Write out the mapped contigs/loci based on coordinates. Note that we want to 
-# iterate over the final file that has delete genes as to only map those genes 
-# that actually make it to the final GBK file. 
+# iterate over the final file that potentially has deleted genes as to only map 
+# those genes that actually make it to the final GBK file. 
 for k1,v1 in emap.iteritems():
     k2 = k1
-    v2 = bmap[k2]
+    if k2 not in bmap:
+        print "Uh oh, contig_length|coords|translation of %s not found in initial file." % (k2)
+        v2 = "N/A+N/A"
+    else:
+        v2 = bmap[k2]
     e1 = v1.split('+')
     e2 = v2.split('+')
     l1 = e1[0] # grab locus
