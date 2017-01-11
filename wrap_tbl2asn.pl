@@ -59,13 +59,12 @@ readInput($hCmdLineArgs{'input_file'});
 foreach my $locus (keys %hMeta){
 	my $aMeta = $hMeta{$locus};
 	$sDiscrep = $hCmdLineArgs{'output_dir'}."/$locus/".$locus."_discrep.txt";
-
 	if(-e $hCmdLineArgs{'input_dir'} && -d $hCmdLineArgs{'input_dir'}) {
 		$sTbl = $hCmdLineArgs{'input_dir'}."/$locus/".$locus.".tbl";
 		$sFasta = $hCmdLineArgs{'input_dir'}."/$locus/".$locus.".fsa";
 		$sSbt = $hCmdLineArgs{'input_dir'}."/$locus/".$locus.".sbt";
 		if(-e $sFasta && -e $sSbt) {
-			$sSource = "[gcode=11][host=$aMeta[8]][country=$aMeta[10]][collection-date=$aMeta[9]][organism=$aMeta[5]][strain=$aMeta[6]][serotype=$aMeta[7]][isolation-source=$aMeta[19]][note=$aMeta[22]][tech=wgs]";
+			$sSource = "[gcode=11][host=$aMeta->[8]][country=$aMeta->[10]][collection-date=$aMeta->[9]][organism=$aMeta->[5]][strain=$aMeta->[6]][serotype=$aMeta->[7]][isolation-source=$aMeta->[19]][note=$aMeta->[22]][tech=wgs]";
 			if((-e $hCmdLineArgs{'utility_path'}) && (-x $hCmdLineArgs{'utility_path'})) {
 				$sCmd = "$hCmdLineArgs{'utility_path'} -p $hCmdLineArgs{'input_dir'}/$locus -t $sSbt -r $hCmdLineArgs{'output_dir'}/$locus -a s -V vb -X C -Z $sDiscrep -j \"$sSource\"";
 				if(defined($hCmdLineArgs{'opts'})) {
@@ -127,6 +126,7 @@ sub readInput {
 		next if($sLine =~ /^\s+$/);
 		my $paMeta;
 		@$paMeta = split(/\t/, $sLine);
+
 		# @meta : This script needs columns 0 and 5-10 
 #		[0] = Db name
 #		[1] = NCBI locus tag
