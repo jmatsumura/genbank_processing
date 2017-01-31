@@ -58,7 +58,9 @@ for line in md:
         SeqIO.write(rec, fsa_outfile, "fasta") # write the FASTA file
 
         # Build the .tbl file
-        header = ">Feature %s\n" % (rec.name)
+        name = rec.name
+        true_name = name.split(' ')[0]
+        header = ">Feature %s\n" % (true_name)
         tbl_outfile.write(header)
 
         # Build a protein_id as you go, only add if gene present.
