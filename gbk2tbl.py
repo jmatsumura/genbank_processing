@@ -55,12 +55,12 @@ for line in md:
     # Note that a downstream script will filter out those entries <200bp
     for rec in records:
 
+        rec.id = rec.name # set the locus to what the pipeline expects
+        rec.description = "" # also overriding biopythons locus location
         SeqIO.write(rec, fsa_outfile, "fasta") # write the FASTA file
 
         # Build the .tbl file
-        name = rec.name
-        true_name = name.split(' ')[0]
-        header = ">Feature %s\n" % (true_name)
+        header = ">Feature %s\n" % (rec.id)
         tbl_outfile.write(header)
 
         # Build a protein_id as you go, only add if gene present.
