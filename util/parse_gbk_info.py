@@ -1,15 +1,16 @@
 
 
 # Script to iterate through a GenBank file and pull out the following information
-# and place into a TSV. There will be seven columns:
+# and place into a TSV. There will be eight columns:
 #
 # 1. Locus
 # 2. Locus tag
-# 3. Coordinates
-# 4. Product
-# 5. Gene symbol
-# 6. EC number
-# 7. Notes
+# 3. Coordinate start
+# 4. Coordinate stop
+# 5. Product
+# 6. Gene symbol
+# 7. EC number
+# 8. Notes
 #
 # Note that it's possible not all of these values are present, although tabs
 # will be incorporated as if all are present so looking at one column at a time
@@ -37,7 +38,7 @@ out_list = [] # append one entry here for every locus tag entry
 
 with open(i,'r') as gbk:
 
-    l,lt,c,p,g,ec,n = ("" for i in range(7))
+    l,lt,c1,c2,p,g,ec,n = ("" for i in range(8))
     multi_p,multi_n = (False for i in range(2)) # loops for multiline product/notes
 
     for line in gbk:
@@ -49,11 +50,11 @@ with open(i,'r') as gbk:
             # If a gene feature is reached and we've already gathered data on the
             # previous entry then add this entry to the list. 
             if lt != "":
-                out_list.append(("\t".join([l,lt,c,p,g,ec,n])))
+                out_list.append(("\t".join([l,lt,c1,c2,p,g,ec,n])))
 
                 # Reinitialize all except for Locus as that one is overarching
                 # across all entries in the current section.
-                lt,c,p,g,ec,n = ("" for i in range(6)) 
+                lt,c1,c2,p,g,ec,n = ("" for i in range(7)) 
 
         elif line.startswith('LOCUS'): # grab locus
             l = re.search(regex_for_locus,line).group(1)
@@ -63,7 +64,13 @@ with open(i,'r') as gbk:
 
         # Grab the coords
         elif '   CDS   ' in line or '   tRNA   ' in line or '   rRNA   ' in line:
-            c = re.search(regex_for_coord_string,line).group(1)
+            results = re.search(regex_for_coord_string,line)
+            if results.group(2): # check if complement is present, swap coords if so
+                c1 = results.group(4)
+                c2 = results.group(3)
+            else: # normal 5'->3'
+                c1 = results.group(3)
+                c2 = results.group(4)
         
         elif multi_p == True: # loop for finding subsequent product lines
             line = line.rstrip('\n')
@@ -83,7 +90,7 @@ with open(i,'r') as gbk:
                 multi_p = True
             
         elif '/gene=' in line: # grab the gene symbol
-            p = re.search(regex_for_gene,line).group(1)
+            g = re.search(regex_for_gene,line).group(1)
 
         elif '/EC_number=' in line: # grab the gene symbol
             ec = re.search(regex_for_ec,line).group(1)
