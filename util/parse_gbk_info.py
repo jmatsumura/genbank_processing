@@ -67,7 +67,9 @@ with open(i,'r') as gbk:
             results = re.search(regex_for_coord_string,line)
             if results.group(2): # check if complement is present, swap coords if so
                 c1 = results.group(4)
+                c1 = c1.replace(">","<")
                 c2 = results.group(3)
+                c2 = c2.replace("<",">")
             else: # normal 5'->3'
                 c1 = results.group(3)
                 c2 = results.group(4)
