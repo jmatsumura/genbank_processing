@@ -57,6 +57,12 @@ with open(i,'r') as gbk:
                 lt,c1,c2,p,g,ec,n = ("" for i in range(7)) 
 
         elif line.startswith('LOCUS'): # grab locus
+            
+            # Handle the last gene with a locus entry.
+            if lt != "":
+                out_list.append(("\t".join([l,lt,c1,c2,p,g,ec,n])))
+                lt,c1,c2,p,g,ec,n = ("" for i in range(7))
+
             l = re.search(regex_for_locus,line).group(1)
 
         elif '/locus_tag=' in line: # grab locus tag
