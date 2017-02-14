@@ -43,6 +43,8 @@ with open(i,'r') as gbk:
 
     for line in gbk:
 
+        line = line.rstrip('\n')
+
         # Use the gene feature marker as a breaking point for when to complete
         # an entry.
         if '   gene   ' in line: 
@@ -81,7 +83,6 @@ with open(i,'r') as gbk:
                 c2 = results.group(4)
         
         elif multi_p == True: # loop for finding subsequent product lines
-            line = line.rstrip('\n')
             add_p = re.search(regex_for_multiline_product,line).group(1)
             p = "{0} {1}".format(p,add_p)
 
@@ -104,7 +105,6 @@ with open(i,'r') as gbk:
             ec = re.search(regex_for_ec,line).group(1)
 
         elif multi_n == True: # loop for finding subsequent product lines
-            line = line.rstrip('\n')
             add_n = re.search(regex_for_multiline_note,line).group(1)
             n = "{0} {1}".format(n,add_n)
 
@@ -114,7 +114,7 @@ with open(i,'r') as gbk:
         elif '/note=' in line: # grab the gene symbol
             n = re.search(regex_for_note,line).group(1)
 
-            if p.endswith('"'):
+            if n.endswith('"'):
                 n = n[:-1]
             else:
                 multi_n = True
