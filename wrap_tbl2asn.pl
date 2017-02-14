@@ -32,7 +32,7 @@ my %hCmdLineArgs = ();
 # Log file handle;
 my $logfh;
 my ($ERROR, $WARN, $DEBUG) = (1, 2, 3);
-my ($sCmd, $sDiscrep, $sSource, $sSqnFile, $sTbl, $sFasta, $sSbt);
+my ($sCmd, $sDiscrep, $sSource, $sSqnFile, $sTbl, $sFasta, $sSbt, $write_out);
 my @aMeta = ();
 my %hMeta = ();
 
@@ -42,6 +42,7 @@ my %hMeta = ();
 GetOptions(\%hCmdLineArgs,
 	   'input_file|i=s',
 	   'input_dir|d=s',
+	   'output_file|of=s',
 	   'output_dir|o=s',
 	   'utility_path|p=s',
 	   'opts|t=s',
@@ -54,6 +55,8 @@ pod2usage( {-exitval => 0, -verbose => 2, -output => \*STDERR} ) if ($hCmdLineAr
 checkCmdLineArgs(\%hCmdLineArgs);
 
 readInput($hCmdLineArgs{'input_file'});
+
+my $outfile = $hCmdLineArgs{'output_file'};
 
 # loop through all metadata lines
 foreach my $locus (keys %hMeta){
@@ -86,6 +89,13 @@ foreach my $locus (keys %hMeta){
 	my $sRet = chdir($hCmdLineArgs{'output_dir'}."/$locus");
 
 	printLogMsg($DEBUG, "INFO : Executing tbl2asn command :: $sCmd");
+
+	if(defined($hCmdLineArgs{'output_file'})) {
+		print($hCmdLineArgs{'output_file'});
+		open($write_out, ">> $outfile") or printLogMsg("ERROR : Could not open $write_out file for writing.");
+		print $write_out "$sCmd\n";
+	}
+
 	system($sCmd);
 
 	$sSqnFile = $hCmdLineArgs{'output_dir'}."/$locus/".$locus.".sqn";

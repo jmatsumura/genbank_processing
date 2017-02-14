@@ -82,7 +82,7 @@ echo "$cmd"
 $cmd || { echo 'prepare_sbt_cmt.pl failed!' ; exit 1; }
 
 # run tbl2asn - round 1
-cmd="perl $DIR/wrap_tbl2asn.pl --input_file=$metadata_list --output_dir=$output_dir --input_dir=$output_dir --utility_path=/usr/local/packages/tbl2asn/bin/tbl2asn --opts="
+cmd="perl $DIR/wrap_tbl2asn.pl --input_file=$metadata_list --output_dir=$output_dir --input_dir=$output_dir --utility_path=/usr/local/packages/tbl2asn/bin/tbl2asn --opts= --output_file="
 echo "cmd"
 $cmd || { echo 'Round 1 wrap_tbl2asn.pl failed!' ; exit 1; }
 
@@ -125,8 +125,8 @@ for locus in `awk '{print $2}' $metadata_list`; do
 done
 
 # run tbl2asn - round 2
-cmd="perl $DIR/wrap_tbl2asn.pl --input_file=$metadata_list --output_dir=$output_dir --input_dir=$output_dir --utility_path=/usr/local/packages/tbl2asn/bin/tbl2asn --opts="
-echo "cmd"
+cmd="perl $DIR/wrap_tbl2asn.pl --input_file=$metadata_list --output_dir=$output_dir --input_dir=$output_dir --utility_path=/usr/local/packages/tbl2asn/bin/tbl2asn --opts= --output_file=$output_dir/tbl2asn_command_list.txt"
+echo "$cmd"
 $cmd || { echo 'Round 2 wrap_tbl2asn.pl failed!' ; exit 1; }
 
 echo "Finished! Exiting now!"
