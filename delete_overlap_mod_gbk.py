@@ -41,6 +41,10 @@ for line in md:
     out = "%s/%s/delete_overlap_mod.gbk" % (out_dir,locus)
     outfile = open(out,'w')
 
+    # Write out which genes are being deleted
+    delete_out = "%s/%s/deleted_ids.txt" % (out_dir,locus)
+    delete_out = open(out,'w')
+
     overlap = False
     found_overlapping_entries = False
     delete_us = []
@@ -64,6 +68,7 @@ for line in md:
                     line = line.strip('\n')
                     elements = line.split('\t')
                     delete_us.append(elements[-1]) # grab the locus tag to delete
+                    delete_out.write("%s\n" % elements[-1])
 
     within_gene = False
     rna_within = False
