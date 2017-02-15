@@ -68,7 +68,7 @@ for line in md:
                     line = line.strip('\n')
                     elements = line.split('\t')
                     delete_us.append(elements[-1]) # grab the locus tag to delete
-                    delete_out.write("%s\t%s\n" % (elements[-1],elements[-2])
+                    delete_out.write("%s\t%s\n" % (elements[-1],elements[-2]))
 
     within_gene = False
     rna_within = False
