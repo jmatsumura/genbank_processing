@@ -25,14 +25,16 @@ id = "" # single EC number ID
 for line in ed:
     if line.startswith('ID'): # grab most recent ID
         id = re.search(regex_for_ec_id,line).group(1)
-    elif 'Transferred entry' in line: # transferred entries all map to most recent ID
+    elif 'Transferred entry' in line: # transferred entries are the new valid EC numbers
         all_ecs = re.search(regex_for_ec_transferred,line).group(1)
         indiv_ecs = all_ecs.split(' ')
-        for ec in indiv_ecs:
-            if ec[0].isdigit(): # found an EC number, not 'and' or some nonsense
-                if not ec[-1:].isdigit():
-                    ec = ec[:-1] # trim commas and periods
-                transferred_ec[ec] = id # set all transferred to new EC
+        if len(indiv_ecs) > 1: # hit multiple, need manual curation let the discrep file catch
+            transferred_ec[id] = id
+        else:
+            ec = all_ecs
+            if not ec[-1:].isdigit():
+                ec = ec[:-1] # trim commas and periods
+            transferred_ec[id] = ec # assign to new transferred entry EC
 
 # Iterate over the metadata file, one line per GBK to process
 for line in md:
