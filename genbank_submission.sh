@@ -86,10 +86,10 @@ cmd="perl $DIR/wrap_tbl2asn.pl --input_file=$metadata_list --output_dir=$output_
 echo "cmd"
 $cmd || { echo 'Round 1 wrap_tbl2asn.pl failed!' ; exit 1; }
 
-# delete overlapping genes
-cmd="$PY_EXE $DIR/delete_overlap_mod_gbk.py $metadata_list $output_dir $discrep_file"	# CHANGE THINGS AS NEEDED
+# delete overlapping genes - round 1
+cmd="$PY_EXE $DIR/delete_overlap_mod_gbk.py $metadata_list $output_dir $discrep_file 1"	
 echo "$cmd"
-$cmd || { echo 'delete_overlap_mod_gbk.py failed!' ; exit 1; }
+$cmd || { echo 'delete_overlap_mod_gbk.py round 1 failed!' ; exit 1; }
 
 # gbk2tbl - round 2
 cmd="$PY_EXE $DIR/gbk2tbl.py $metadata_list $output_dir 2"
@@ -125,6 +125,21 @@ for locus in `awk '{print $2}' $metadata_list`; do
 done
 
 # run tbl2asn - round 2
+cmd="perl $DIR/wrap_tbl2asn.pl --input_file=$metadata_list --output_dir=$output_dir --input_dir=$output_dir --utility_path=/usr/local/packages/tbl2asn/bin/tbl2asn --opts= --output_file="
+echo "cmd"
+$cmd || { echo 'Round 1 wrap_tbl2asn.pl failed!' ; exit 1; }
+
+# delete overlapping genes - round 2
+cmd="$PY_EXE $DIR/delete_overlap_mod_gbk.py $metadata_list $output_dir $discrep_file 2"	
+echo "$cmd"
+$cmd || { echo 'delete_overlap_mod_gbk.py round 2 failed!' ; exit 1; }
+
+# gbk2tbl - round 3 (can be treated like round 2 since it's following the same script)
+cmd="$PY_EXE $DIR/gbk2tbl.py $metadata_list $output_dir 2"
+echo "$cmd"
+$cmd || { echo 'Round 2 gbk2tbl.py failed!' ; exit 1; }
+
+# run tbl2asn - round 3
 cmd="perl $DIR/wrap_tbl2asn.pl --input_file=$metadata_list --output_dir=$output_dir --input_dir=$output_dir --utility_path=/usr/local/packages/tbl2asn/bin/tbl2asn --opts= --output_file=$output_dir/tbl2asn_command_list.txt"
 echo "$cmd"
 $cmd || { echo 'Round 2 wrap_tbl2asn.pl failed!' ; exit 1; }

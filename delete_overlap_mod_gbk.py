@@ -11,6 +11,7 @@ import sys, re
 
 metadata = str(sys.argv[1])
 out_dir = str(sys.argv[2])
+round_num = str(sys.argv[3])
 
 md = open(metadata,'r')
 
@@ -33,8 +34,14 @@ for line in md:
     disc_in = "%s/%s/%s_discrep.txt" % (out_dir,locus,locus)
     disc = open(disc_in,'r')
 
+    gbk_in = ""
+
     # Pull the GBK file in to potentially modify
-    gbk_in = "%s/%s/ec_numbers_mod.gbk" % (out_dir,locus)
+    if round_num == "1":
+        gbk_in = "%s/%s/ec_numbers_mod.gbk" % (out_dir,locus)
+    elif round_num == "2":
+        gbk_in = "%s/%s/%s.gbf" % (out_dir,locus,locus)
+
     gbk = open(gbk_in,'r')
 
     # Write out a gbk file with overlaps deleted (if any are present)
@@ -43,7 +50,7 @@ for line in md:
 
     # Write out which genes are being deleted
     delete_out = "%s/%s/deleted_ids.txt" % (out_dir,locus)
-    delete_out = open(delete_out,'w')
+    delete_out = open(delete_out,'a')
 
     overlap = False
     found_overlapping_entries = False
