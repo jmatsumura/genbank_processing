@@ -87,9 +87,9 @@ echo "cmd"
 $cmd || { echo 'Round 1 wrap_tbl2asn.pl failed!' ; exit 1; }
 
 # delete overlapping genes - round 1
-cmd="$PY_EXE $DIR/delete_overlap_mod_gbk.py $metadata_list $output_dir $discrep_file 1"	
+cmd="$PY_EXE $DIR/delete_overlap_mod.py $metadata_list $output_dir $discrep_file gbk"	
 echo "$cmd"
-$cmd || { echo 'delete_overlap_mod_gbk.py round 1 failed!' ; exit 1; }
+$cmd || { echo 'delete_overlap_mod.py round 1 failed!' ; exit 1; }
 
 # gbk2tbl - round 2
 cmd="$PY_EXE $DIR/gbk2tbl.py $metadata_list $output_dir 2"
@@ -130,9 +130,9 @@ echo "cmd"
 $cmd || { echo 'Round 1 wrap_tbl2asn.pl failed!' ; exit 1; }
 
 # delete overlapping genes - round 2
-cmd="$PY_EXE $DIR/delete_overlap_mod_gbk.py $metadata_list $output_dir $discrep_file 2"	
+cmd="$PY_EXE $DIR/delete_overlap_mod.py $metadata_list $output_dir $discrep_file tbl"	
 echo "$cmd"
-$cmd || { echo 'delete_overlap_mod_gbk.py round 2 failed!' ; exit 1; }
+$cmd || { echo 'delete_overlap_mod.py round 2 failed!' ; exit 1; }
 
 # gbk2tbl - round 3 (can be treated like round 2 since it's following the same script)
 cmd="$PY_EXE $DIR/gbk2tbl.py $metadata_list $output_dir 2"
