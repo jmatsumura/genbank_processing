@@ -15,7 +15,7 @@ round_num = str(sys.argv[3])
 
 md = open(metadata,'r')
 
-regex_for_gene = r'^\s+gene\s+[complement]*\(*\d+..\d+\)*'
+regex_for_gene = r'^\s+gene\s+[complement]*\(?<?\d+..>?\d+\)?'
 regex_for_rna = r'^\s+[a-z]*RNA\s+[complement]*\(*\d+..\d+\)*'
 regex_for_locus = r'^\s+/locus_tag="(.*)"'
 
