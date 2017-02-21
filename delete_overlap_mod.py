@@ -7,7 +7,7 @@
 # The following will not be deleted:
 # 1) A xRNA entirely within a CDS
 
-import sys, re
+import sys, re, shutil
 
 metadata = str(sys.argv[1])
 out_dir = str(sys.argv[2])
@@ -22,7 +22,7 @@ regex_for_locus = r'^\s+/locus_tag="(.*)"'
 
 # regex for TBL file
 regex_for_tbl_start = r'^<?\d+\t>?\d+\tgene'
-regex_for_tbl_locus = r'^\s+locus_tag\t(.*)$'
+regex_for_tbl_locus = r'^\s+locus_tag\s+(.*)$'
 
 # Iterate over the metadata file, one line per GBK to process
 for line in md:
@@ -40,18 +40,20 @@ for line in md:
     disc = open(disc_in,'r')
 
     input_file = ""
+    output_file = ""
 
     # Pull the GBK file in to potentially modify
-    if round_num == "":
+    if file_type == "gbk":
         input_file = "%s/%s/ec_numbers_mod.gbk" % (out_dir,locus)
-    elif round_num == "2":
+        output_file = "%s/%s/delete_overlap_mod.gbk" % (out_dir,locus)
+    elif file_type == "tbl":
         input_file = "%s/%s/%s.tbl" % (out_dir,locus,locus)
+        output_file = "%s/%s/%s.new.tbl" % (out_dir,locus,locus)
 
     infile = open(input_file,'r')
 
-    # Write out a gbk file with overlaps deleted (if any are present)
-    out = "%s/%s/delete_overlap_mod.gbk" % (out_dir,locus)
-    outfile = open(out,'w')
+    # Write out a GBK/TBL file with overlaps deleted (if any are present)
+    outfile = open(output_file,'w')
 
     # Write out which genes are being deleted
     delete_out = "%s/%s/deleted_ids.txt" % (out_dir,locus)
@@ -140,6 +142,7 @@ for line in md:
 
             elif file_type == 'tbl': # only process either gbk or tbl
 
+                # Have hit a new contig
                 if line.startswith(">"):
 
                     # If we are at a new contig, check if the previous gene
@@ -168,13 +171,24 @@ for line in md:
 
                     locus = ""
                     gene_region = []
+                    gene_region.append(line) # start a new gene entry
 
                 elif within_gene == True: # build the entire gene entry
                 
-                    if re.search(regex_for_locus,line): # if locus found, capture
-                        locus = re.search(regex_for_locus,line).group(1)
+                    if re.search(regex_for_tbl_locus,line): # if locus found, capture
+                        locus = re.search(regex_for_tbl_locus,line).group(1)
 
                     gene_region.append(line)
 
         else:
             outfile.write(line) # simply copying over, straying away from extra dependencies (cp cmd)
+
+    # If we have a TBL file and we deleted, need to check the very last entry here
+    if file_type == 'tbl' and overlap == True:
+        if locus not in delete_us:
+            for ele in gene_region:
+                outfile.write(ele)
+
+    # If we have a TBL file in general, need to rename for downstream processing
+    if file_type == 'tbl':
+        shutil.move(output_file,input_file)

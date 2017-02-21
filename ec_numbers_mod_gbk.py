@@ -65,11 +65,11 @@ for line in md:
     for l in gbk:
 
         if "/EC_number=" in l: # found the EC number
-            curr_ec = re.search(regex_for_ec_num,l).group(1)
-            if curr_ec in transferred_ec: # if updated EC, replace
-                base = " " * 21 # no replacing digits easy, just build new string
-                ec_str = '/EC_number="%s"\n' % (transferred_ec[curr_ec])
-                l = "%s%s" % (base,ec_str)
+            #curr_ec = re.search(regex_for_ec_num,l).group(1)
+            #if curr_ec in transferred_ec: # if updated EC, replace
+            #    base = " " * 21 # no replacing digits easy, just build new string
+            #    ec_str = '/EC_number="%s"\n' % (transferred_ec[curr_ec])
+            #    l = "%s%s" % (base,ec_str)
             mod_ec = re.search(regex_for_ec_num,l).group(1) # potentially modified EC
             if mod_ec not in delete_us: # only print those that aren't to be deleted
                 outfile.write(l)
