@@ -48,7 +48,7 @@ for line in ed:
         product = re.search(regex_for_product_name,line).group(1) 
 
         if product.endswith('.'): # got the full product    
-            product_list.append(product)
+            product_list.append(product[:-1])
             new_ec_product[id] = ''.join(product_list)
             product_list = [] # reinitialize
 
@@ -149,5 +149,5 @@ for line in md:
         for original_id,new_id in out_map[map_type].items():
             if original_id in ec_list and map_type == 'single-mapped':
                 histfile.write("%s\t%s\t%s\t%s\t%s\n" % (map_type,original_id,old_ec_product[original_id],new_id,new_ec_product[new_id]))
-            else: # write out multimaps
-                histfile.write("%s\t%s\trequires curation for which of these to move to:\t%s") % (map_type,original_id,new_id)
+            elif original_id in ec_list: # write out multimaps
+                histfile.write("%s\t%s\trequires curation for which of these to change to:\t%s\n" % (map_type,original_id,out_map[map_type][original_id]))
