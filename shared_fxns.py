@@ -29,7 +29,7 @@ def printName(name,out): # need some handling in case of multi-line
         single_line = [] # store just the current line being built
 
         for x in words:
-            if not (len(' '.join(single_line)) + len(x)) > max_len: # if i can fit, add it
+            if not (len(' '.join(single_line)) + len(x)) >= max_len: # if i can fit, add it
                 single_line.append(x)
             else: # too long, add to multi-line and build a new one
                 multi_line.append(' '.join(single_line))
