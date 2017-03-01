@@ -62,16 +62,17 @@ for line in md:
     overlap = False
     found_overlapping_entries = False
     delete_us = set()
+    container,containee = ("" for i in range(2))
 
     # Iterate over the discrep file to find any relevant CDS/RNA within CDS/RNA.
     for line in disc:
-        if line.startswith('FIND_OVERLAPPED_GENES:') and overlap == False:
+        if line.startswith('CONTAINED_CDS:') and overlap == False:
             overlap = True
         # If reached detailed report and haven't found the above string, no overlap present
         elif line.startswith('Detailed Report') and overlap == False: 
             break
 
-        if line.startswith('DiscRep_ALL:FIND_OVERLAPPED_GENES::'):
+        if line.startswith('DiscRep_ALL:CONTAINED_CDS::'):
             found_overlapping_entries = True
         elif found_overlapping_entries == True:
             if line.startswith('DiscRep'): # reached next discrep set, done finding overlaps
@@ -79,10 +80,18 @@ for line in md:
                 break # got all that we need from discrep file
             else: # identify the loci that are entirely contained within another
                 if '\t' in line:
+
                     line = line.strip('\n')
                     elements = line.split('\t')
-                    delete_us.add(elements[-1]) # grab the locus tag to delete
-                    delete_out.write("%s\t%s\n" % (elements[-1],elements[-2]))
+
+                    if container = "": # overarching CDS
+                        container = elements[-1]
+
+                    elif containee = "": # CDS within CDS 
+                        containee = elements[-1]
+                        delete_us.add(elements[-1]) # grab the locus tag to delete
+                        delete_out.write("%s\t%s\n" % (elements[-1],elements[-2]))
+                        container,containee = ("" for i in range(2))
 
     within_gene = False
     rna_within = False
