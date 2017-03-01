@@ -84,10 +84,10 @@ for line in md:
                     line = line.strip('\n')
                     elements = line.split('\t')
 
-                    if container = "": # overarching CDS
+                    if container == "": # overarching CDS
                         container = elements[-1]
 
-                    elif containee = "": # CDS within CDS 
+                    elif containee == "": # CDS within CDS 
                         containee = elements[-1]
                         delete_us.add(elements[-1]) # grab the locus tag to delete
                         delete_out.write("%s\t%s\n" % (elements[-1],elements[-2]))
