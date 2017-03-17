@@ -16,14 +16,14 @@
 #
 # HOW TO RUN: python extract_contaminants.py -contaminant_file contaminants.txt -out_dir /path/to/out_dir_prefix -tbl total
 #
-# This will product a number of files...
+# This will produce a number of files...
 # *_fsa = IDs to be used for trimming contaminants from FSA files
 # *_tbl = IDs to be used for trimming contaminants from TBL files
 # contigs_to_remove.txt = IDs to be used as input for remove_contigs.py
 #
 # Author: James Matsumura
 
-import sys, re, argparse
+import sys, argparse
 
 def main():
 
