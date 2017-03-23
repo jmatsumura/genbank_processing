@@ -71,7 +71,7 @@ with open(i,'r') as gbk:
             lt = re.search(regex_for_locus_tag,line).group(1)
 
         # Grab the coords
-        elif '   CDS   ' in line or '   tRNA   ' in line or '   rRNA   ' in line:
+        elif '   CDS   ' in line or '   tRNA   ' in line or '   rRNA   ' in line or '   ncRNA   ' in line:
             results = re.search(regex_for_coord_string,line)
             if results.group(2): # check if complement is present, swap coords if so
                 c1 = results.group(4)
