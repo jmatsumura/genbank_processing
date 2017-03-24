@@ -39,7 +39,7 @@ out_list = [] # append one entry here for every locus tag entry
 with open(i,'r') as gbk:
 
     l,lt,c1,c2,p,g,ec,n = ("" for i in range(8))
-    multi_p,multi_n = (False for i in range(2)) # loops for multiline product/notes
+    multi_p,multi_n,translation = (False for i in range(3)) # loops for multiline product/notes and boolean for valid gene
 
     for line in gbk:
 
@@ -61,9 +61,10 @@ with open(i,'r') as gbk:
         elif line.startswith('LOCUS'): # grab locus
             
             # Handle the last gene with a locus entry.
-            if lt != "":
+            if lt != "" and translation == True:
                 out_list.append(("\t".join([l,lt,c1,c2,p,g,ec,n])))
                 lt,c1,c2,p,g,ec,n = ("" for i in range(7))
+                translation = False
 
             l = re.search(regex_for_locus,line).group(1)
 
@@ -73,6 +74,10 @@ with open(i,'r') as gbk:
         # Grab the coords
         elif '   CDS   ' in line or '   tRNA   ' in line or '   rRNA   ' in line or '   ncRNA   ' in line:
             results = re.search(regex_for_coord_string,line)
+
+            if "join(" in line: # this join syntax can be ignored as these entries will be skipped
+                continue
+
             if results.group(2): # check if complement is present, swap coords if so
                 c1 = results.group(4)
                 c1 = c1.replace(">","<")
@@ -118,6 +123,9 @@ with open(i,'r') as gbk:
                 n = n[:-1]
             else:
                 multi_n = True
+
+        elif '/translation=' in line: # has a translation, valid sequence
+            translation = True
 
 with open(o,'w') as out:
     for entry in out_list:
