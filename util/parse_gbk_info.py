@@ -51,12 +51,16 @@ with open(i,'r') as gbk:
 
             # If a gene feature is reached and we've already gathered data on the
             # previous entry then add this entry to the list. 
-            if lt != "":
-                out_list.append(("\t".join([l,lt,c1,c2,p,g,ec,n])))
-
+            if lt != "" and translation == True:
+                
                 # Reinitialize all except for Locus as that one is overarching
                 # across all entries in the current section.
+                out_list.append(("\t".join([l,lt,c1,c2,p,g,ec,n])))
                 lt,c1,c2,p,g,ec,n = ("" for i in range(7)) 
+                translation = False
+
+            else:
+                lt,c1,c2,p,g,ec,n = ("" for i in range(7))
 
         elif line.startswith('LOCUS'): # grab locus
             
@@ -65,6 +69,9 @@ with open(i,'r') as gbk:
                 out_list.append(("\t".join([l,lt,c1,c2,p,g,ec,n])))
                 lt,c1,c2,p,g,ec,n = ("" for i in range(7))
                 translation = False
+            
+            else: 
+                lt,c1,c2,p,g,ec,n = ("" for i in range(7))
 
             l = re.search(regex_for_locus,line).group(1)
 
@@ -124,8 +131,11 @@ with open(i,'r') as gbk:
             else:
                 multi_n = True
 
-        elif '/translation=' in line: # has a translation, valid sequence
+        if '/translation=' in line: # has a translation, valid sequence
             translation = True
+
+    if lt != "" and translation == True:
+        out_list.append(("\t".join([l,lt,c1,c2,p,g,ec,n])))
 
 with open(o,'w') as out:
     for entry in out_list:
