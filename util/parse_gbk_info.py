@@ -16,12 +16,13 @@
 # will be incorporated as if all are present so looking at one column at a time
 # will work.
 #
-# python parse_gbk_info.py /path/to/in.gbk /path/to/out.tsv
+# python parse_gbk_info.py /path/to/in.gbk /path/to/out.tsv (YES|NO)
 
 import sys, re
 
 i = str(sys.argv[1]) # in GBK file
 o = str(sys.argv[2]) # out TSV file
+pseudos = str(sys.argv[3]) # "YES" or "NO" for include pseudos/RNAs/etc
 
 # Note that regex in the same order as the output
 regex_for_locus = r'^LOCUS\s+([a-zA-Z0-9_\.]+)\s+' # 1
@@ -59,6 +60,11 @@ with open(i,'r') as gbk:
                 lt,c1,c2,p,g,ec,n = ("" for i in range(7)) 
                 translation = False
 
+            elif lt != "" and pseudos == "YES":
+                out_list.append(("\t".join([l,lt,c1,c2,p,g,ec,n])))
+                lt,c1,c2,p,g,ec,n = ("" for i in range(7)) 
+                translation = False
+
             else:
                 lt,c1,c2,p,g,ec,n = ("" for i in range(7))
 
@@ -68,6 +74,11 @@ with open(i,'r') as gbk:
             if lt != "" and translation == True:
                 out_list.append(("\t".join([l,lt,c1,c2,p,g,ec,n])))
                 lt,c1,c2,p,g,ec,n = ("" for i in range(7))
+                translation = False
+
+            elif lt != "" and pseudos == "YES":
+                out_list.append(("\t".join([l,lt,c1,c2,p,g,ec,n])))
+                lt,c1,c2,p,g,ec,n = ("" for i in range(7)) 
                 translation = False
             
             else: 
