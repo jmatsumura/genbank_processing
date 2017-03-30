@@ -147,6 +147,8 @@ with open(i,'r') as gbk:
 
     if lt != "" and translation == True:
         out_list.append(("\t".join([l,lt,c1,c2,p,g,ec,n])))
+    elif lt != "" and psuedos == "YES":
+        out_list.append(("\t".join([l,lt,c1,c2,p,g,ec,n])))
 
 with open(o,'w') as out:
     for entry in out_list:
