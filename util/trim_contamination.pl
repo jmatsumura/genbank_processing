@@ -78,16 +78,20 @@ sub process_fasta {
 	$genome_ref = readSeq($file);
 	open(FO, "> $fsa_file") or printLogMsg($ERROR, "Could not open file $fsa_file for writing. Reason: $!");
 	foreach $contig (keys %$genome_ref) {
+
+		my $new_seq = $genome_ref->{$contig};
+
 		if(exists($contaminated_contigs->{$contig})) {
 			# Start and end coordinates assume sequence start at position 1
 			my ($start, $end) = split(/\.\./, $contaminated_contigs->{$contig});
-			my $new_seq = $genome_ref->{$contig};
+			
 			$new_seq = substr($new_seq, 0, $start-1) . substr($new_seq, $end);
 			#print "New Seq for $contig is from 0.." . ($start-1) . " and from $end to the end\n";
-			print FO ">$contig\n$new_seq\n";
-		} else {
-			print FO ">$contig\n$genome_ref->{$contig}\n";
 		}
+		print FO ">$contig\n";
+		while ($new_seq =~ m/(.{1,60})/gs) {
+			print FO $1, "\n";
+		}			
 	}
 	close(FO);
 	#system("$Bin/cleanFasta.pl $fsa_file");	
