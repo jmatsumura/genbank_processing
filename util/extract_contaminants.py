@@ -28,7 +28,7 @@ import sys, argparse
 def main():
 
 	parser = argparse.ArgumentParser(description='Script to prep files for trim_contamination.pl.')
-	parser.add_argument('-contaminant_file', type=str, required=True, help='Path to a contamination file from Path to map.tsv output from format_for_assembly.py or final_verdict.py.')
+	parser.add_argument('-contaminant_file', type=str, required=True, help='Path to a contamination file.')
 	parser.add_argument('-out_dir', type=str, required=True, help='Prefix to directory where all this output will be written.')
 	parser.add_argument('-tbl', type=str, required=True, help='Path to a TBL file that contains ALL entries that are going to be considered for contaminant purging.')
 	args = parser.parse_args()
