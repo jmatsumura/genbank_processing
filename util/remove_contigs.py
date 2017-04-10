@@ -48,38 +48,39 @@ def fsa_rc(contigs,genomes,fsa):
 		genome = first_line.split('_')[0][1:]
 		new_file = fsa.replace('/new_','/final_')
 
-		if genome in genomes: # need to remove a contig
-			# iterate over the file and remove contigs
-			fasta_entry = []
-			relevant_fasta = False
-
-			with open(new_file,'w') as out:
-				for line in file:
-					if line.startswith('>'):
-						current_contig = line[1:-1]
-
-						if len(fasta_entry) > 0:
-							for x in fasta_entry:
-								out.write(x)
-
-							relevant_fasta = False
-							fasta_entry = []
-
-						if current_contig not in contigs:
-							fasta_entry.append(line)
-							relevant_fasta = True
-
-					elif relevant_fasta == True:
-						fasta_entry.append(line)
-
-				# Handle an entry in the last line
-				if len(fasta_entry) > 0:
-					with open(new_file,'a') as out:
-						for x in fasta_entry:
-							out.write(x)				
-
-		else: # no changes needed, just rename
+		if genome not in genomes: # doesn't need processing
 			os.system('cp {0} {1}'.format(fsa,new_file))
+			return
+
+	with open(fsa,'r') as file:
+		# iterate over the file and remove contigs
+		fasta_entry = []
+		relevant_fasta = False
+
+		with open(new_file,'w') as out:
+			for line in file:
+				if line.startswith('>'):
+					current_contig = line[1:-1]
+
+					if len(fasta_entry) > 0:
+						for x in fasta_entry:
+							out.write(x)
+
+						relevant_fasta = False
+						fasta_entry = []
+
+					if current_contig not in contigs:
+						fasta_entry.append(line)
+						relevant_fasta = True
+
+				elif relevant_fasta == True:
+					fasta_entry.append(line)
+
+			# Handle an entry in the last line
+			if len(fasta_entry) > 0:
+				for x in fasta_entry:
+					out.write(x)				
+			
 
 def tbl_rc(contigs,genomes,tbl):
 
@@ -88,38 +89,38 @@ def tbl_rc(contigs,genomes,tbl):
 		genome = first_line.split(' ')[1].split('_')[0]
 		new_file = tbl.replace('/new_','/final_')
 
-		if genome in genomes:
-			# iterate over the file and remove contigs
-			tbl_entry = []
-			relevant_tbl = False
+		if genome not in genomes:
+			os.system('cp {0} {1}'.format(tbl,new_file))
+			return
 
-			with open(new_file,'w') as out:
-				for line in file:
-					if line.startswith('>'):
-						current_contig = line.split(' ')[0][:-1]
+	with open(tbl,'r') as file:
+		# iterate over the file and remove contigs
+		tbl_entry = []
+		relevant_tbl = False
 
-						if len(tbl_entry) > 0:
-							for x in tbl_entry:
-								out.write(x)
+		with open(new_file,'w') as out:
+			for line in file:
+				if line.startswith('>'):
+					current_contig = line.split(' ')[0][:-1]
 
-							relevant_tbl = False
-							tbl_entry = []
-
-						if current_contig not in contigs:
-							tbl_entry.append(line)
-							relevant_tbl = True
-
-					elif relevant_tbl == True:
-						tbl_entry.append(line)
-
-				# Handle an entry in the last line
-				if len(tbl_entry) > 0:
-					with open(new_file,'a') as out:
+					if len(tbl_entry) > 0:
 						for x in tbl_entry:
 							out.write(x)
 
-		else: # no changes needed, just rename
-			os.system('cp {0} {1}'.format(tbl,new_file))
+						relevant_tbl = False
+						tbl_entry = []
+
+					if current_contig not in contigs:
+						tbl_entry.append(line)
+						relevant_tbl = True
+
+				elif relevant_tbl == True:
+					tbl_entry.append(line)
+
+			# Handle an entry in the last line
+			if len(tbl_entry) > 0:
+				for x in tbl_entry:
+					out.write(x)
 
 
 if __name__ == '__main__':
