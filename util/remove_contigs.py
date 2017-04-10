@@ -100,8 +100,8 @@ def tbl_rc(contigs,genomes,tbl):
 
 		with open(new_file,'w') as out:
 			for line in file:
-				if line.startswith('>'):
-					current_contig = line.split(' ')[0][:-1]
+				if line.startswith('>Feature'):
+					current_contig = line.split(' ')[1][:-1]
 
 					if len(tbl_entry) > 0:
 						for x in tbl_entry:
