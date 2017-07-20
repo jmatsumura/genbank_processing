@@ -100,6 +100,7 @@ for line in md:
                         cdsrna_entry.append(line)
                     elif '/locus_tag="' in line:
                         gene_entry.append(line)
+                        cdsrna_entry.append(line)
                     else:
                         cdsrna_entry.append(line)
             else:
